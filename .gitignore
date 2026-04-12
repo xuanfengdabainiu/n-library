@@ -1,0 +1,47 @@
+# ==========================================
+# 1. Java & Spring Boot (你原有的部分)
+# ==========================================
+library/HELP.md
+.gradle
+build/
+target/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ==========================================
+# 2. 前端 (Vue / Node.js 必备)
+# ==========================================
+node_modules/
+dist/
+dist-ssr/
+*.local
+.npm/
+
+# ==========================================
+# 3. Python AI 引擎必备
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+
+# ==========================================
+# 4. 开发工具与操作系统垃圾 (防内鬼)
+# ==========================================
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### VS Code ###
+.vscode/
+
+### Mac / Windows 缓存 ###
+.DS_Store
+Thumbs.db
