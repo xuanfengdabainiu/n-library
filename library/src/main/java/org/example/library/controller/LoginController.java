@@ -3,6 +3,7 @@ package org.example.library.controller;
 import org.example.library.entity.User;
 import org.example.library.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value; // ✨ 新增导入
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,7 +18,9 @@ public class LoginController {
     @Autowired
     private UserRepository userRepository;
 
-    private final String PYTHON_SERVICE_URL = "http://pop_face_system:8000/api";
+    // ✨ 核心修改：动态读取 Python 地址，不再写死
+    @Value("${python.service.url}")
+    private String PYTHON_SERVICE_URL;
 
     // ==========================================
     // 1. 刷脸登录接口
@@ -33,37 +36,34 @@ public class LoginController {
             Map<String, String> pythonReq = new HashMap<>();
             pythonReq.put("image_base64", base64Image);
 
+            // 使用动态注入的 PYTHON_SERVICE_URL
             Map pythonResult = restTemplate.postForObject(PYTHON_SERVICE_URL + "/recognize", pythonReq, Map.class);
 
-            // B. Python 识别成功后，Java 去数据库核对身份
             if (pythonResult != null && (Boolean) pythonResult.get("success")) {
-                String recognizedFaceId = (String) pythonResult.get("face_id"); // 假设 Python 返回唯一的 face_id
-
-                // 在 MySQL 中查找绑定了该人脸的用户
-                User user = userRepository.findByFaceId(recognizedFaceId);
+                String faceId = (String) pythonResult.get("face_id");
+                User user = userRepository.findByFaceId(faceId);
 
                 if (user != null) {
                     response.put("success", true);
                     response.put("userName", user.getUsername());
-                    response.put("message", "波普图书馆欢迎你！");
                 } else {
                     response.put("success", false);
-                    response.put("message", "人脸已识别，但未绑定账号");
+                    response.put("message", "库中未找到匹配人脸");
                 }
             } else {
                 response.put("success", false);
-                response.put("message", "面部匹配失败，你是特工吗？");
+                response.put("message", "识别失败：人脸不匹配或未检测到人脸");
             }
 
         } catch (Exception e) {
             response.put("success", false);
-            response.put("message", "后台服务开小差了...");
+            response.put("message", "后台服务开小差了，请稍后再试");
         }
         return response;
     }
 
     // ==========================================
-    // 2. 刷脸注册接口 (核心新增)
+    // 2. 人脸注册接口
     // ==========================================
     @PostMapping("/register/face")
     public Map<String, Object> faceRegister(@RequestBody Map<String, String> request) {
@@ -73,21 +73,20 @@ public class LoginController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // A. 先把照片发给 Python，让它提取人脸特征并保存
             RestTemplate restTemplate = new RestTemplate();
             Map<String, String> pythonReq = new HashMap<>();
             pythonReq.put("username", username);
             pythonReq.put("image_base64", base64Image);
 
+            // 使用动态注入的 PYTHON_SERVICE_URL
             Map pythonResult = restTemplate.postForObject(PYTHON_SERVICE_URL + "/register", pythonReq, Map.class);
 
             if (pythonResult != null && (Boolean) pythonResult.get("success")) {
                 String newFaceId = (String) pythonResult.get("face_id");
 
-                // B. Python 处理成功后，Java 将用户信息存入 MySQL
                 User newUser = new User();
                 newUser.setUsername(username);
-                newUser.setPassword(password); // 实际项目建议加密：passwordEncoder.encode(password)
+                newUser.setPassword(password);
                 newUser.setFaceId(newFaceId);
 
                 userRepository.save(newUser);
@@ -102,7 +101,7 @@ public class LoginController {
 
         } catch (Exception e) {
             response.put("success", false);
-            response.put("message", "注册失败，请检查网络");
+            response.put("message", "注册失败：AI 引擎连接中断");
         }
         return response;
     }

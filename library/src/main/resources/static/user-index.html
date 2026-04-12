@@ -420,8 +420,23 @@
         }, 300);
     }
 
+    // ⚡️ 全局阅读触发器：兼顾动画、加币和跳转
     function handleReadClick(btnElement, url) {
+        // 1. 播放你那超酷的波普砸击动画
         playClickAnimation(btnElement);
+
+        // 2. 发起“Read-to-Earn”请求：直接奖励 10 金币
+        fetch(`/api/user/reward-coins?username=${currentUsername}&amount=10`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    console.log(`%c KA-CHING! +10 COINS! Balance: ${data.newBalance}`, "color: #FFDE00; font-weight: bold; font-size: 1.2rem;");
+                    // 这里可以扩展一个小的 UI 提示，比如在按钮上方飘出一个 "+10 🪙"
+                }
+            })
+            .catch(err => console.error("金币入账失败，网络特工拦截了它！", err));
+
+        // 3. 稍作延迟跳转，让动画播完
         setTimeout(() => {
             openReadLink(url);
         }, 300);

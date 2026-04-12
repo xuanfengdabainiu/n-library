@@ -67,6 +67,23 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
+    // ✨ 升级版：支持自定义加币数量的接口
+    @PostMapping("/reward-coins")
+    public ResponseEntity<Map<String, Object>> rewardCoins(@RequestParam String username, @RequestParam int amount) {
+        User user = userRepository.findByUsername(username);
+        Map<String, Object> response = new HashMap<>();
+
+        if (user != null) {
+            int currentCoins = user.getPopCoins() != null ? user.getPopCoins() : 0;
+            user.setPopCoins(currentCoins + amount); // 💥 加上指定数量（比如 10）
+            userRepository.save(user);
+
+            response.put("success", true);
+            response.put("newBalance", user.getPopCoins());
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.notFound().build();
+    }
 
     // ✨ 新增：接收 Python 处理好的 Face ID 并绑定到数据库
     @PostMapping("/update-face-id")
