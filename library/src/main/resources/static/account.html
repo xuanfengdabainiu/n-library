@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>ACCOUNT - POP! LIBRARY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --pop-yellow: #FFDE00; --pop-pink: #FF3366; --pop-blue: #00E5FF; --pop-green: #00FF66; --pop-black: #111111; --pop-white: #ffffff; }
+
+        body {
+            font-family: 'Impact', sans-serif; margin: 0; height: 100vh; overflow: hidden;
+            background-color: var(--pop-white);
+            background-image: radial-gradient(rgba(17, 17, 17, 0.15) 20%, transparent 21%);
+            background-size: 40px 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;
+            /* ✨ 方案二：为 3D 翻转提供透视感 */
+            perspective: 1500px;
+        }
+
+        /* --- ✨ 涂鸦与 QQ 弹 --- */
+        .graffiti-wrapper { position: absolute; z-index: 1; cursor: pointer; }
+        .graffiti-content { width: 100%; height: 100%; filter: drop-shadow(4px 4px 0px var(--pop-black)); transition: filter 0.2s; transform-origin: center center; }
+        @keyframes qqBounceAnim { 0% { transform: scale(1, 1); } 30% { transform: scale(1.3, 0.7); } 60% { transform: scale(0.8, 1.2); } 80% { transform: scale(1.1, 0.9); } 100% { transform: scale(1, 1); } }
+        .qq-bouncing { animation: qqBounceAnim 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
+        .graffiti-svg { width: 100%; height: auto; display: block; }
+
+        /* --- ✨ 页面布局与发牌特效 --- */
+        .header { position: absolute; top: 30px; left: 40px; background: var(--pop-green); color: var(--pop-black); padding: 15px 30px; border: 6px solid var(--pop-black); font-size: 2.5rem; text-transform: uppercase; box-shadow: 10px 10px 0px var(--pop-black); transform: rotate(-2deg); z-index: 100; }
+        .back-btn { position: absolute; top: 35px; right: 40px; background: var(--pop-pink); color: var(--pop-white); width: 70px; height: 70px; border: 6px solid var(--pop-black); border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 6px 6px 0px var(--pop-black); transition: all 0.2s; z-index: 100; text-decoration: none; }
+        .back-btn:hover { background: var(--pop-yellow); color: var(--pop-black); transform: scale(1.1) rotate(-15deg); }
+
+        .cards-container { position: relative; width: 100%; height: 60vh; display: flex; justify-content: center; align-items: center; margin-top: 50px; z-index: 10; }
+
+        .card {
+            position: absolute; width: 320px; height: 480px;
+            cursor: pointer;
+            transition: transform 0.3s ease, z-index 0s; transform-origin: 50% 250%; opacity: 0;
+        }
+
+        .card::after { content: ''; position: absolute; bottom: -150px; left: -20px; width: calc(100% + 40px); height: 150px; background: transparent; pointer-events: auto; }
+        .card:hover { z-index: 50 !important; }
+
+        /* ✨ 悬浮平移特效 */
+        .card-1:hover:not(.is-flipped) { transform: rotate(-22deg) translateY(-30px) scale(1.05) !important; }
+        /* 翻转状态下的悬浮适配 */
+        .card-1.is-flipped:hover { transform: rotate(-22deg) translateY(-30px) scale(1.05) rotateY(180deg) !important; }
+
+        .card-2:hover { transform: rotate(0deg) translateY(-40px) scale(1.05) !important; }
+        .card-3:hover { transform: rotate(22deg) translateY(-30px) scale(1.05) !important; }
+
+        /* ✨ Card 1 改造为 3D 容器 */
+        .card-1 {
+            transform-style: preserve-3d;
+            animation: dealArc1 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards; z-index: 20;
+        }
+        .card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .card-1.is-flipped .card-inner { transform: rotateY(180deg); }
+
+        .card-face {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border: 8px solid var(--pop-black); box-shadow: 15px 15px 0px var(--pop-black);
+            padding: 25px; box-sizing: border-box; display: flex; flex-direction: column;
+        }
+
+        .card-front { background: var(--pop-yellow); }
+
+        /* ✨ 背面：黑金 VIP 样式 */
+        .card-back {
+            background: var(--pop-black); color: var(--pop-yellow);
+            transform: rotateY(180deg);
+            background-image: linear-gradient(135deg, rgba(255,222,0,0.1) 25%, transparent 25%);
+            background-size: 20px 20px;
+        }
+
+        /* 镭射反光特效 */
+        .holographic-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.2) 45%, rgba(0,229,255,0.2) 50%, rgba(255,51,102,0.2) 55%, transparent 70%);
+            background-size: 200% 200%; pointer-events: none; mix-blend-mode: screen; animation: holoMove 3s infinite linear;
+        }
+        @keyframes holoMove { 0% { background-position: 200% 0%; } 100% { background-position: -200% 0%; } }
+
+        .vip-barcode { background: white; height: 50px; width: 100%; margin-top: auto; display: flex; align-items: flex-end; justify-content: space-around; padding: 5px; box-sizing: border-box; }
+        .barcode-line { background: black; width: 2px; height: 100%; }
+        .barcode-line.wide { width: 4px; }
+
+        .card-2 { background: var(--pop-blue); border: 8px solid var(--pop-black); box-shadow: 15px 15px 0px var(--pop-black); padding: 25px; box-sizing: border-box; display: flex; flex-direction: column; animation: dealArc2 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards; animation-delay: 0.2s; z-index: 21; }
+        .card-3 { background: var(--pop-pink); border: 8px solid var(--pop-black); box-shadow: 15px 15px 0px var(--pop-black); padding: 25px; box-sizing: border-box; display: flex; flex-direction: column; animation: dealArc3 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards; animation-delay: 0.4s; z-index: 20; }
+
+        @keyframes dealArc1 { 0% { transform: rotate(-90deg) scale(0.5); opacity: 0; } 100% { transform: rotate(-22deg); opacity: 1; } }
+        @keyframes dealArc2 { 0% { transform: rotate(-90deg) scale(0.5); opacity: 0; } 100% { transform: rotate(0deg) translateY(-40px); opacity: 1; } }
+        @keyframes dealArc3 { 0% { transform: rotate(-90deg) scale(0.5); opacity: 0; } 100% { transform: rotate(22deg); opacity: 1; } }
+
+        .card h3 { font-size: 2.2rem; margin: 0 0 20px 0; border-bottom: 6px solid var(--pop-black); padding-bottom: 10px; text-transform: uppercase; -webkit-text-stroke: 1px var(--pop-black); color: var(--pop-white); }
+        .avatar-box { width: 120px; height: 120px; border: 6px solid var(--pop-black); border-radius: 50%; margin: 0 auto 20px; background: var(--pop-white) url('https://api.dicebear.com/6.x/bottts/svg?seed=pop') center/cover; }
+        .info-row { display: flex; justify-content: space-between; align-items: center; background: var(--pop-white); border: 4px solid var(--pop-black); padding: 10px; margin-bottom: 15px; font-size: 1.2rem; color: var(--pop-black); }
+
+        .action-btn { width: 100%; padding: 15px; margin-top: auto; font-family: 'Impact', sans-serif; font-size: 1.5rem; border: 5px solid var(--pop-black); cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .btn-yellow { background: var(--pop-yellow); color: var(--pop-black); } .btn-pink { background: var(--pop-pink); color: white; } .btn-black { background: var(--pop-black); color: white; } .btn-green { background: var(--pop-green); color: var(--pop-black); }
+        .action-btn:hover { transform: translate(-4px, -4px); box-shadow: 6px 6px 0px var(--pop-black); }
+        .action-btn:active { transform: translate(0, 0); box-shadow: 0px 0px 0px var(--pop-black); }
+
+        /* --- ✨ 火焰与爆炸特效 --- */
+        .badge { font-size: 5rem; text-align: center; text-shadow: 5px 5px 0px var(--pop-black); margin-bottom: 20px; transform: rotate(10deg); display: inline-block; }
+        @keyframes popExplosion { 0% { transform: scale(1) rotate(10deg); filter: drop-shadow(0 0 0 transparent); } 20% { transform: scale(1.8) rotate(-20deg); filter: drop-shadow(15px 15px 0 var(--pop-yellow)); } 40% { transform: scale(1.5) rotate(30deg); filter: drop-shadow(-15px -15px 0 var(--pop-blue)); } 60% { transform: scale(2) rotate(-10deg); filter: drop-shadow(15px -15px 0 var(--pop-green)); } 80% { transform: scale(1.2) rotate(20deg); filter: drop-shadow(-15px 15px 0 var(--pop-pink)); } 100% { transform: scale(1) rotate(10deg); filter: drop-shadow(5px 5px 0 var(--pop-black)); } }
+        .explode-anim { animation: popExplosion 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        .face-id-scanner { width: 120px; height: 120px; margin: 0 auto 20px; border: 6px dashed var(--pop-black); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 4rem; position: relative; overflow: hidden; background: var(--pop-black); color: var(--pop-green); }
+        .face-id-scanner.scanning::after { content: ''; position: absolute; top: -50%; left: 0; width: 100%; height: 20px; background: rgba(0, 255, 102, 0.6); box-shadow: 0 0 20px var(--pop-green); animation: scanLine 2s linear infinite; }
+        @keyframes scanLine { 0% { top: -20%; } 100% { top: 120%; } }
+
+        /* --- ✨ 打字机模态框样式 --- */
+        .pin-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,17,17,0.92); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); opacity: 0; transition: 0.3s; }
+        .pin-modal-overlay.active { display: flex; opacity: 1; }
+        .typewriter-case { background: #2a2a2a; border: 10px solid #444; border-radius: 20px; padding: 40px; width: 620px; display: flex; flex-direction: column; gap: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.1); transform: translateY(50px); transition: 0.4s; }
+        .pin-modal-overlay.active .typewriter-case { transform: translateY(0); }
+        .typewriter-paper { background: #f0f0f0; min-height: 80px; padding: 20px; border-radius: 5px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.2); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .paper-content { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: bold; color: #333; letter-spacing: 5px; word-break: break-all; text-align: center; }
+        .paper-label { position: absolute; top: 5px; left: 10px; font-size: 0.7rem; color: #888; text-transform: uppercase; }
+        .keyboard-area { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        .keyboard-row { display: flex; gap: 8px; }
+        .key-round { width: 45px; height: 45px; border-radius: 50%; background: #eee; border: 3px solid #666; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 0 #999; transition: 0.1s; font-family: 'Courier New', monospace; font-weight: bold; }
+        .key-round:active { transform: translateY(3px); box-shadow: 0 1px 0 #999; background: #ccc; }
+        .key-round.backspace { width: 80px; border-radius: 10px; background: var(--pop-pink); color: white; }
+        .key-round.enter { width: 100px; border-radius: 10px; background: var(--pop-green); }
+        .key-round.caps { width: 80px; border-radius: 10px; background: var(--pop-blue); color: #111; }
+        .key-round.active-caps { background: var(--pop-yellow); box-shadow: 0 0 15px var(--pop-yellow); border-color: var(--pop-black); }
+        .close-modal { position: absolute; top: 40px; right: 50px; color: var(--pop-white); font-size: 4rem; cursor: pointer; }
+        @keyframes typeShake { 0% { transform: translate(0,0); } 25% { transform: translate(2px, -2px); } 50% { transform: translate(-2px, 2px); } 100% { transform: translate(0,0); } }
+        .typing-anim { animation: typeShake 0.1s linear; }
+
+    </style>
+</head>
+<body>
+
+<div class="pin-modal-overlay" id="pinModal">
+    <i class="fa-solid fa-xmark close-modal" id="closePinModal"></i>
+    <div class="typewriter-case">
+        <div class="typewriter-paper" id="paper">
+            <div class="paper-label" id="paperLabel">Enter New Password</div>
+            <div class="paper-content" id="paperContent">________</div>
+        </div>
+        <div class="keyboard-area" id="keyArea">
+        </div>
+    </div>
+</div>
+
+<div class="header">⚡️ SETTINGS</div>
+<a href="user-index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+
+<div class="cards-container">
+    <div class="card card-1" id="membershipCard">
+        <div class="card-inner">
+            <div class="card-face card-front">
+                <h3>ID CARD</h3>
+                <div class="avatar-box" id="avatarBox"></div>
+                <div class="info-row"><span>USER:</span> <strong id="accUsername">Loading</strong></div>
+                <div class="info-row"><span>PASSWORD:</span> <strong id="userPassDisplay">Loading</strong></div>
+                <button class="action-btn btn-black" id="btnMembership">MEMBERSHIP</button>
+            </div>
+            <div class="card-face card-back">
+                <div class="holographic-overlay"></div>
+                <h3>VIP MEMBER</h3>
+                <div style="margin-top: 20px; text-align: center;">
+                    <i class="fa-solid fa-crown" style="font-size: 4rem; color: gold; filter: drop-shadow(0 0 10px gold);"></i>
+                </div>
+                <div style="margin: 30px 0; border: 2px dashed var(--pop-yellow); padding: 15px; font-size: 0.9rem;">
+                    <div style="display:flex; justify-content: space-between;"><span>RANK:</span> <span>LEGENDARY</span></div>
+                    <div style="display:flex; justify-content: space-between; margin-top:10px;"><span>SINCE:</span> <span id="vipDate">2026</span></div>
+                </div>
+                <div class="vip-barcode">
+                    <div class="barcode-line"></div><div class="barcode-line wide"></div><div class="barcode-line"></div><div class="barcode-line wide"></div>
+                    <div class="barcode-line"></div><div class="barcode-line wide"></div><div class="barcode-line"></div><div class="barcode-line wide"></div>
+                </div>
+                <button class="action-btn btn-yellow" id="btnBackToFront" style="margin-top: 20px; color: black;">BACK TO ID</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-2">
+        <h3>SECURITY</h3>
+        <div class="face-id-scanner" id="scannerBox">
+            <i class="fa-solid fa-expand" id="scannerIcon" style="position: relative; z-index: 3;"></i>
+
+            <video id="videoElement" autoplay playsinline style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index: 1;"></video>
+
+            <img id="faceImage" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index: 2;" />
+        </div>
+        <div class="info-row" style="background:var(--pop-green);"><span>FACE ID:</span> <strong id="faceIdStatus">READY</strong></div>
+        <button class="action-btn btn-yellow" id="btnScanFace">⚡️ RE-SCAN FACE</button>
+        <button class="action-btn btn-pink" id="btnChangePin" style="margin-top:10px;">CHANGE PASS</button>
+    </div>
+
+    <div class="card card-3">
+        <h3>STATS</h3>
+        <div style="text-align: center;"><div class="badge" id="fireBadge">🔥</div></div>
+        <div class="info-row"><span>JOINED:</span> <strong id="statJoined">...</strong></div>
+        <div class="info-row"><span>BOOKS:</span> <strong id="statCollected">...</strong></div>
+        <div class="info-row"><span>COINS:</span> <strong id="statCoins">...</strong></div>
+        <button class="action-btn btn-green" id="btnMintCoin">🔥 MINT COIN</button>
+    </div>
+</div>
+
+<canvas id="canvasElement" style="display:none;"></canvas>
+
+<script>
+    const currentUsername = localStorage.getItem('username') || 'GUEST';
+    document.getElementById('accUsername').innerText = currentUsername;
+
+    // --- ✨ 3D 翻转逻辑 ---
+    const membershipCard = document.getElementById('membershipCard');
+    document.getElementById('btnMembership').onclick = (e) => {
+        e.stopPropagation();
+        membershipCard.classList.add('is-flipped');
+    };
+    document.getElementById('btnBackToFront').onclick = (e) => {
+        e.stopPropagation();
+        membershipCard.classList.remove('is-flipped');
+    };
+
+    // --- ✨ 涂鸦逻辑 ---
+    const graffitiSVGs = [
+        `<svg class="graffiti-svg" viewBox="0 0 100 80"><path fill="var(--pop-yellow)" stroke="var(--pop-black)" stroke-width="3" d="M5,40 L0,20 L20,25 L25,5 L50,20 L75,0 L70,30 L95,25 L85,50 L100,70 L75,65 L60,90 L40,70 L10,85 L20,55 Z"/><text x="50%" y="55%" text-anchor="middle" font-family="Impact" font-size="20">POP!</text></svg>`,
+        `<svg class="graffiti-svg" viewBox="0 0 50 80"><polygon fill="var(--pop-blue)" stroke="var(--pop-black)" stroke-width="3" points="25,0 0,50 20,50 10,80 45,35 25,35"/></svg>`,
+        `<svg class="graffiti-svg" viewBox="0 0 60 60"><polygon fill="var(--pop-pink)" stroke="var(--pop-black)" stroke-width="3" points="30,0 37,23 60,23 41,37 48,60 30,46 12,60 19,37 0,23 23,23"/></svg>`
+    ];
+
+    function createGraffiti() {
+        for (let i = 0; i < 14; i++) {
+            const wrapper = document.createElement('div'); wrapper.className = 'graffiti-wrapper';
+            wrapper.style.left = Math.random()*85 + '%'; wrapper.style.top = Math.random()*85 + '%';
+            const content = document.createElement('div'); content.className = 'graffiti-content';
+            content.innerHTML = graffitiSVGs[Math.floor(Math.random()*graffitiSVGs.length)];
+            wrapper.style.transform = `scale(${0.8+Math.random()}) rotate(${(Math.random()*60)-30}deg)`;
+            wrapper.style.width = '120px'; wrapper.appendChild(content);
+            wrapper.onclick = () => { content.classList.remove('qq-bouncing'); void content.offsetWidth; content.classList.add('qq-bouncing'); };
+            document.body.prepend(wrapper);
+        }
+    }
+
+    // --- ✨ 打字机逻辑 ---
+    let isCaps = true;
+    const keyLayout = [
+        ['1','2','3','4','5','6','7','8','9','0'],
+        ['Q','W','E','R','T','Y','U','I','O','P'],
+        ['CAPS','A','S','D','F','G','H','J','K','L','DEL'],
+        ['Z','X','C','V','B','N','M','ENT']
+    ];
+
+    function renderKeyboard() {
+        const keyArea = document.getElementById('keyArea');
+        keyArea.innerHTML = "";
+        keyLayout.forEach(row => {
+            const rowDiv = document.createElement('div'); rowDiv.className = 'keyboard-row';
+            row.forEach(key => {
+                const k = document.createElement('div'); k.className = 'key-round';
+                if(key === 'DEL') k.classList.add('backspace');
+                else if(key === 'ENT') k.classList.add('enter');
+                else if(key === 'CAPS') { k.classList.add('caps'); if(isCaps) k.classList.add('active-caps'); }
+
+                let displayKey = key;
+                if(key.length === 1) displayKey = isCaps ? key.toUpperCase() : key.toLowerCase();
+                k.innerText = key === 'ENT' ? 'CONFIRM' : displayKey;
+                k.onclick = () => typeChar(key);
+                rowDiv.appendChild(k);
+            });
+            keyArea.appendChild(rowDiv);
+        });
+    }
+
+    let pinStep = 1, firstPin = "", currentInput = "";
+    function typeChar(val) {
+        const paper = document.getElementById('paper');
+        paper.classList.remove('typing-anim'); void paper.offsetWidth; paper.classList.add('typing-anim');
+
+        if(val === 'CAPS') { isCaps = !isCaps; renderKeyboard(); return; }
+        if(val === 'DEL') currentInput = currentInput.slice(0, -1);
+        else if(val === 'ENT') {
+            if(currentInput.length < 4) return alert("Min 4 characters!");
+            if(pinStep === 1) { firstPin = currentInput; currentInput = ""; pinStep = 2; document.getElementById('paperLabel').innerText = "Confirm New Password"; }
+            else {
+                if(currentInput === firstPin) {
+                    document.getElementById('paperLabel').innerText = "UPDATING...";
+                    fetch(`/api/user/update-password?username=${currentUsername}&newPassword=${firstPin}`, {method:'POST'}).then(r => { if(r.ok) location.reload(); });
+                } else { alert("Mismatch!"); resetTypewriter(); }
+            }
+        } else { if(currentInput.length < 15) currentInput += (isCaps ? val.toUpperCase() : val.toLowerCase()); }
+        document.getElementById('paperContent').innerText = "*".repeat(currentInput.length) || "________";
+    }
+    function resetTypewriter() { pinStep = 1; firstPin = ""; currentInput = ""; document.getElementById('paperLabel').innerText = "Enter New Password"; document.getElementById('paperContent').innerText = "________"; }
+
+    // --- ✨ 基础逻辑加载 ---
+    const video = document.getElementById('videoElement'), canvas = document.getElementById('canvasElement');
+    const faceImage = document.getElementById('faceImage'), btnScanFace = document.getElementById('btnScanFace');
+    let stream = null, isScanning = false;
+
+    btnScanFace.onclick = async () => {
+        if (!isScanning) {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream; video.style.display = 'block'; faceImage.style.display = 'none';
+                document.getElementById('scannerBox').classList.add('scanning');
+                btnScanFace.innerText = '📸 SNAP!'; isScanning = true;
+            } catch (e) { alert("Camera Access Denied"); }
+        } else {
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0); const base64 = canvas.toDataURL('image/jpeg');
+            stream.getTracks().forEach(t => t.stop()); video.style.display = 'none';
+            document.getElementById('scannerBox').classList.remove('scanning');
+            fetch('/python-api/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({username: currentUsername, image_base64: base64})})
+                .then(r => r.json()).then(data => {
+                if(data.success) fetch(`/api/user/update-face-id?username=${currentUsername}&faceId=${data.face_id}`, {method:'POST'}).then(() => location.reload());
+            });
+        }
+    };
+
+    document.getElementById('btnChangePin').onclick = () => { document.getElementById('pinModal').classList.add('active'); renderKeyboard(); };
+    document.getElementById('closePinModal').onclick = () => document.getElementById('pinModal').classList.remove('active');
+
+    document.getElementById('btnMintCoin').onclick = function() {
+        const badge = document.getElementById('fireBadge');
+        badge.classList.remove('explode-anim'); void badge.offsetWidth; badge.classList.add('explode-anim');
+        fetch(`/api/user/add-coin?username=${currentUsername}`, {method:'POST'}).then(() => loadStats());
+    };
+
+    window.onload = () => {
+        createGraffiti(); // 保留 14 个涂鸦
+        renderKeyboard(); // 保留打字机键盘
+
+        // ✨ 核心修改 1：生成完全随机的美式复古涂鸦头像 (Croodles)，不绑定账号
+        const randomSeed = Math.random().toString(36).substring(7);
+        const retroAvatar = `https://api.dicebear.com/7.x/croodles/svg?seed=${randomSeed}&backgroundColor=ffffff`;
+        document.getElementById('avatarBox').style.backgroundImage = `url(${retroAvatar})`;
+
+        // ✨ 核心修改 2：第二张卡片的人脸照片逻辑不变，但不再覆盖第一张卡片的头像
+        const imgUrl = `/ai-faces/${currentUsername}.jpg?t=${Date.now()}`;
+        const img = new Image();
+        img.onload = () => {
+            // 只给第二张卡片的预览图赋值
+            faceImage.src = imgUrl;
+            faceImage.style.display = 'block';
+            document.getElementById('scannerIcon').style.display = 'none';
+            // 原本这里有一行给 avatarBox 赋值的代码，现在被我精准删除了
+        };
+        img.src = imgUrl;
+
+        loadStats();
+    };
+
+    async function loadStats() {
+        const res = await fetch(`/api/user/stats?username=${currentUsername}`);
+        if(res.ok) {
+            const data = await res.json();
+            document.getElementById('statJoined').innerText = `DAY ${data.joinedDays}`;
+            document.getElementById('statCollected').innerText = `${data.collectedBooks} BOOKS`;
+            document.getElementById('statCoins').innerText = data.popCoins.toLocaleString();
+
+            // ✨ 新增这一行：直接显示明文密码
+            document.getElementById('userPassDisplay').innerText = data.password || 'N/A';
+        }
+    }
+</script>
+</body>
+</html>

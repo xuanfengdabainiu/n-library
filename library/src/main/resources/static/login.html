@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>3D POP! 身份验证</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --pop-yellow: #FFDE00; --pop-pink: #FF3366; --pop-blue: #00E5FF;
+            --pop-green: #00FF66; --pop-black: #111111; --pop-white: #ffffff;
+        }
+
+        /* 1. 全局波普背景动画 */
+        body {
+            margin: 0; padding: 0; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background-color: var(--pop-pink);
+            background-image: radial-gradient(var(--pop-black) 10%, transparent 11%),
+            radial-gradient(var(--pop-black) 10%, transparent 11%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            animation: bgScroll 20s linear infinite;
+            font-family: 'Impact', sans-serif;
+            perspective: 1500px;
+            overflow: hidden;
+        }
+
+        /* 2. 原有的翻转卡片样式 */
+        .flip-container { width: 480px; height: 650px; position: relative; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; z-index: 10; }
+        .flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: var(--pop-white); border: 8px solid var(--pop-black); box-shadow: 25px 25px 0px var(--pop-black); padding: 30px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
+        .register-face { transform: rotateY(180deg); background: var(--pop-yellow); }
+
+        h1 { font-size: 2.5rem; margin: 10px 0; -webkit-text-stroke: 1.5px var(--pop-black); text-transform: uppercase; color: var(--pop-pink); animation: pulse 1.5s infinite alternate; }
+        .camera-box { width: 100%; height: 280px; border: 5px solid var(--pop-black); background: #000; position: relative; overflow: hidden; box-shadow: 8px 8px 0px var(--pop-black); }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .scan-line { position: absolute; width: 100%; height: 6px; background: var(--pop-green); z-index: 5; animation: scan 2s infinite ease-in-out; }
+        .input-group { width: 100%; margin: 15px 0; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border: 4px solid var(--pop-black); font-size: 1rem; font-weight: bold; box-sizing: border-box; font-family: 'Impact'; letter-spacing: 2px; }
+
+        .btn { width: 100%; padding: 15px; border: 4px solid var(--pop-black); background: var(--pop-green); font-size: 1.5rem; box-shadow: 6px 6px 0px var(--pop-black); cursor: pointer; transition: 0.1s; text-transform: uppercase; font-family: 'Impact'; }
+        .btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px; }
+        .toggle-btn { margin-top: 20px; color: var(--pop-black); cursor: pointer; text-decoration: underline; font-weight: bold; }
+
+        @keyframes bgScroll { from { background-position: 0 0, 15px 15px; } to { background-position: 300px 300px, 315px 315px; } }
+        @keyframes scan { 0%, 100% { top: 0%; } 50% { top: 90%; } }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .error-shake { animation: shake 0.3s ease-in-out infinite; }
+
+        /* =========================================
+           ✨ 管理员模块样式 (5大特效)
+           ========================================= */
+
+        /* 触发按钮 */
+        .admin-trigger { position: fixed; bottom: 30px; right: 30px; background: var(--pop-yellow); color: var(--pop-black); border: 5px solid var(--pop-black); padding: 10px 20px; font-size: 1.5rem; font-family: 'Impact'; cursor: pointer; box-shadow: 6px 6px 0 var(--pop-black); z-index: 50; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .admin-trigger:hover { transform: scale(1.1) rotate(-5deg); background: var(--pop-blue); }
+
+        /* 模态框遮罩 */
+        .admin-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 1000; display: none; justify-content: center; align-items: center; perspective: 2000px; }
+        .admin-overlay.active { display: flex; }
+
+        /* 特效 1：3D 重力砸落 */
+        .admin-box { width: 450px; background: var(--pop-black); border: 10px solid var(--pop-white); padding: 50px 40px; position: relative; box-shadow: 30px 30px 0 var(--pop-pink); animation: slamDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; display: flex; flex-direction: column; align-items: center; }
+        @keyframes slamDown { 0% { transform: translateZ(800px) translateY(-500px) rotateX(45deg); opacity: 0; } 100% { transform: translateZ(0) translateY(0) rotateX(0); opacity: 1; } }
+
+        /* 特效 2：镜头色散故障字 (Chromatic Aberration) */
+        .glitch-lens { font-size: 3.5rem; color: var(--pop-white); margin-bottom: 20px; text-transform: uppercase; animation: chromaticGlitch 0.2s infinite alternate; text-align: center; line-height: 1; }
+        @keyframes chromaticGlitch {
+            0% { text-shadow: 3px 0 0 rgba(255,0,0,0.8), -3px 0 0 rgba(0,255,255,0.8); }
+            100% { text-shadow: -3px 0 0 rgba(255,0,0,0.8), 3px 0 0 rgba(0,255,255,0.8); }
+        }
+
+        /* 特效 3：流动警戒线 */
+        .warning-tape { position: absolute; left: 0; width: 100%; height: 25px; background: repeating-linear-gradient(45deg, var(--pop-yellow), var(--pop-yellow) 15px, var(--pop-black) 15px, var(--pop-black) 30px); animation: tapeMove 1.5s linear infinite; }
+        .tape-top { top: 0; border-bottom: 4px solid var(--pop-white); }
+        .tape-bottom { bottom: 0; border-top: 4px solid var(--pop-white); }
+        @keyframes tapeMove { 0% { background-position: 0 0; } 100% { background-position: 42.4px 0; } }
+
+        /* 特效 4：探照灯扫描光晕 */
+        .searchlight { position: absolute; top: -100%; left: -100%; width: 300%; height: 300%; background: radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, transparent 20%); pointer-events: none; mix-blend-mode: overlay; animation: sweep 5s ease-in-out infinite alternate; z-index: 2; }
+        @keyframes sweep { 0% { transform: translate(10%, 10%); } 100% { transform: translate(-10%, -10%); } }
+
+        /* 特效 5：快门致盲闪光 */
+        .shutter-flash-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none; display: none; }
+        .shutter-flash-layer.fire { display: block; animation: flashBang 0.8s cubic-bezier(0.075, 0.82, 0.165, 1); }
+        @keyframes flashBang {
+            0% { background: #000; transform: scaleY(0.01); opacity: 1; }
+            10% { background: #fff; transform: scaleY(1); opacity: 1; }
+            100% { background: #fff; transform: scaleY(1); opacity: 0; }
+        }
+
+        /* 管理员内部元素 */
+        .admin-input { width: 100%; background: #222; color: var(--pop-green); border: 4px solid #555; padding: 15px; margin-bottom: 15px; font-size: 1.5rem; transition: 0.3s; text-align: center; }
+        .admin-input:focus { border-color: var(--pop-blue); outline: none; background: #000; box-shadow: 0 0 15px var(--pop-blue); }
+        .btn-admin { background: var(--pop-pink); color: var(--pop-white); border: 4px solid var(--pop-white); margin-top: 10px; z-index: 3; }
+        .btn-admin:hover { background: var(--pop-yellow); color: var(--pop-black); }
+        .close-admin { position: absolute; top: 35px; right: 20px; color: var(--pop-white); font-size: 2rem; background: none; border: none; cursor: pointer; transition: 0.2s; z-index: 5; text-shadow: 2px 2px 0 var(--pop-pink); }
+        .close-admin:hover { transform: scale(1.3) rotate(90deg); color: var(--pop-yellow); }
+    </style>
+</head>
+<body>
+
+<div class="shutter-flash-layer" id="shutterEffect"></div>
+
+<button class="admin-trigger" onclick="openAdminModal()">
+    <i class="fa-solid fa-user-shield"></i> STAFF ONLY
+</button>
+
+<div class="admin-overlay" id="adminModal">
+    <div class="admin-box">
+        <div class="warning-tape tape-top"></div>
+        <div class="warning-tape tape-bottom"></div>
+
+        <div class="searchlight"></div>
+
+        <button class="close-admin" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
+
+        <h2 class="glitch-lens">TOP SECRET<br>ACCESS</h2>
+
+        <input type="text" id="adminUser" class="admin-input" placeholder="STAFF ID">
+        <input type="password" id="adminPass" class="admin-input" placeholder="OVERRIDE CODE">
+
+        <button class="btn btn-admin" onclick="handleAdminLogin()">INITIATE OVERRIDE</button>
+        <div id="adminStatus" style="margin-top:15px; color: var(--pop-yellow); font-size: 1.2rem; font-weight: bold; text-align: center;"></div>
+    </div>
+</div>
+
+<div class="flip-container" id="card">
+    <div class="card-face login-face">
+        <h1>FACE LOGIN</h1>
+        <div class="camera-box">
+            <div class="scan-line"></div>
+            <video id="videoLogin" autoplay muted playsinline></video>
+        </div>
+        <p style="color: var(--pop-pink); font-weight: bold; font-size: 1.2rem;">SCAN YOUR FACE TO ENTER</p>
+        <button class="btn" onclick="handleAuth('login')">VERIFY ME!</button>
+        <div id="statusLogin" style="margin-top:10px; font-weight: bold; font-size: 1.2rem;"></div>
+        <span class="toggle-btn" onclick="toggleCard()">NEED AN ACCOUNT? REGISTER</span>
+    </div>
+
+    <div class="card-face register-face">
+        <h1 style="color: var(--pop-black)">JOIN US!</h1>
+        <div class="camera-box" style="height: 200px;">
+            <video id="videoReg" autoplay muted playsinline></video>
+        </div>
+        <div class="input-group">
+            <input type="text" id="regUser" placeholder="NEW USERNAME">
+            <input type="password" id="regPass" placeholder="NEW PASSWORD">
+        </div>
+        <button class="btn" style="background: var(--pop-blue)" onclick="handleAuth('register')">CREATE IDENTITY</button>
+        <div id="statusReg" style="margin-top:10px; font-weight: bold; font-size: 1.2rem;"></div>
+        <span class="toggle-btn" onclick="toggleCard()">ALREADY A MEMBER? LOGIN</span>
+    </div>
+</div>
+
+<canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+<script>
+    const card = document.getElementById('card');
+    const canvas = document.getElementById('canvas');
+
+    // 初始化摄像头
+    async function initCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            document.getElementById('videoLogin').srcObject = stream;
+            document.getElementById('videoReg').srcObject = stream;
+        } catch (e) {
+            console.log("Camera access denied or unavailable.");
+        }
+    }
+
+    // 翻转动画
+    function toggleCard() {
+        card.classList.toggle('flipped');
+    }
+
+    // 普通用户认证
+    async function handleAuth(mode) {
+        const isReg = mode === 'register';
+        const status = document.getElementById(isReg ? 'statusReg' : 'statusLogin');
+        const video = document.getElementById(isReg ? 'videoReg' : 'videoLogin');
+
+        status.innerText = "PROCESSING...";
+        status.classList.remove('error-shake');
+
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, 640, 480);
+        const imageData = canvas.toDataURL('image/jpeg');
+
+        const payload = { image: imageData };
+        if (isReg) {
+            payload.username = document.getElementById('regUser').value;
+            payload.password = document.getElementById('regPass').value;
+            if (!payload.username || !payload.password) {
+                status.innerText = "MISSING INFO!";
+                status.classList.add('error-shake');
+                return;
+            }
+        }
+
+        try {
+            const path = isReg ? '/api/register/face' : '/api/login/face';
+            const response = await fetch(path, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                status.innerText = "SUCCESS! REDIRECTING...";
+                status.style.color = "var(--pop-green)";
+                localStorage.setItem('username', result.userName);
+                setTimeout(() => window.location.href = "/user-index.html", 1500);
+            } else {
+                status.innerText = "FAILED: " + result.message;
+                status.classList.add('error-shake');
+                status.style.color = "red";
+            }
+        } catch (e) {
+            status.innerText = "SERVER ERROR!";
+            status.classList.add('error-shake');
+        }
+    }
+
+    // --- ✨ 管理员模块交互逻辑 ---
+    function openAdminModal() {
+        document.getElementById('adminModal').classList.add('active');
+    }
+
+    function closeAdminModal() {
+        document.getElementById('adminModal').classList.remove('active');
+        document.getElementById('adminStatus').innerText = "";
+    }
+
+    // 处理管理员真实登录，去掉测试模式
+    async function handleAdminLogin() {
+        const user = document.getElementById('adminUser').value;
+        const pass = document.getElementById('adminPass').value;
+        const status = document.getElementById('adminStatus');
+        const shutter = document.getElementById('shutterEffect');
+
+        status.classList.remove('error-shake');
+
+        if(!user || !pass) {
+            status.innerText = "⚠️ MISSING CREDENTIALS!";
+            status.classList.add('error-shake');
+            return;
+        }
+
+        // 触发镜头快门特效
+        shutter.classList.remove('fire');
+        void shutter.offsetWidth;
+        shutter.classList.add('fire');
+
+        status.innerText = "VERIFYING CLEARANCE...";
+        status.style.color = "var(--pop-yellow)";
+
+        try {
+            // 请求 Java 后端接口
+            const res = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: user, password: pass})
+            });
+            const data = await res.json();
+
+            if(data.success) {
+                status.innerText = "✅ CLEARANCE GRANTED";
+                status.style.color = "var(--pop-green)";
+                localStorage.setItem('admin_username', data.userName || user);
+                // ✨ 成功跳转到管理员主页
+                setTimeout(() => window.location.href = "/admin-index.html", 1000);
+            } else {
+                status.innerText = "❌ ACCESS DENIED";
+                status.style.color = "var(--pop-pink)";
+                status.classList.add('error-shake');
+            }
+        } catch(e) {
+            status.innerText = "⚠️ SYSTEM ERROR / OFFLINE";
+            status.style.color = "var(--pop-pink)";
+            status.classList.add('error-shake');
+        }
+    }
+
+    initCamera();
+</script>
+</body>
+</html>

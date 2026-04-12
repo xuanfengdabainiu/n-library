@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>POP! 发现与收藏</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --pop-yellow: #FFDE00; --pop-pink: #FF3366; --pop-blue: #00E5FF;
+            --pop-green: #00FF66; --pop-black: #111111; --pop-white: #ffffff;
+        }
+        body {
+            font-family: 'Impact', sans-serif; background-color: #f0f0f0;
+            background-image: radial-gradient(var(--pop-black) 10%, transparent 11%);
+            background-size: 20px 20px; margin: 0; padding: 20px;
+        }
+
+        /* 布局容器 */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        /* --- 💥 狂野对比：电光蓝网点搜索区 --- */
+        .search-section {
+            background-color: var(--pop-blue);
+            background-image: radial-gradient(var(--pop-white) 15%, transparent 16%);
+            background-size: 10px 10px;
+            border: 8px solid var(--pop-black);
+            padding: 20px;
+            box-shadow: 12px 12px 0px var(--pop-black);
+            height: 85vh;
+            overflow-y: auto;
+        }
+
+        .search-section h2 {
+            display: inline-block;
+            background: var(--pop-pink);
+            color: var(--pop-white);
+            padding: 10px 15px;
+            border: 4px solid var(--pop-black);
+            transform: rotate(2deg);
+            box-shadow: 5px 5px 0px var(--pop-black);
+            margin-bottom: 25px;
+        }
+
+        /* --- 💥 狂野撞色书架背景 --- */
+        .my-library {
+            background-color: var(--pop-yellow);
+            background-image: radial-gradient(var(--pop-pink) 20%, transparent 21%);
+            background-size: 30px 30px;
+            border: 10px solid var(--pop-black);
+            padding: 40px;
+            box-shadow:
+                    15px 15px 0px var(--pop-black),
+                    30px 30px 0px var(--pop-blue),
+                    45px 45px 0px var(--pop-pink);
+            min-height: 85vh;
+            position: relative;
+        }
+
+        .my-library h2 {
+            display: inline-block;
+            background: var(--pop-green);
+            color: var(--pop-black);
+            padding: 15px 30px;
+            border: 6px solid var(--pop-black);
+            transform: rotate(-3deg) skewX(-10deg);
+            margin-bottom: 40px;
+            box-shadow: 8px 8px 0px var(--pop-black);
+            font-size: 2.5rem;
+            -webkit-text-stroke: 1.5px var(--pop-black);
+            text-transform: uppercase;
+        }
+
+        .search-bar { display: flex; gap: 5px; margin-bottom: 20px; }
+        .search-bar input { flex: 1; border: 4px solid var(--pop-black); padding: 10px; font-weight: bold; }
+        .search-bar button { background: var(--pop-black); color: white; border: none; cursor: pointer; padding: 0 15px; }
+
+        .search-item {
+            display: flex; gap: 10px; background: white;
+            border: 3px solid var(--pop-black); padding: 10px; margin-bottom: 10px;
+            transition: 0.2s;
+        }
+        .search-item:hover { transform: translateX(5px); background: var(--pop-blue); }
+        .search-item img { width: 60px; height: 80px; border: 2px solid var(--pop-black); object-fit: cover; }
+        .search-item .info { flex: 1; font-size: 0.8rem; }
+        .search-item h4 { margin: 0; font-size: 0.9rem; }
+        .add-btn { background: var(--pop-pink); color: white; border: 2px solid var(--pop-black); cursor: pointer; height: 30px; margin-top: 5px; font-weight:bold; transition: 0.2s; }
+        .add-btn:hover { background: var(--pop-green); color: var(--pop-black); }
+
+        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .book-card {
+            background: var(--pop-white);
+            border: 6px solid var(--pop-black);
+            box-shadow: 10px 10px 0px var(--pop-black);
+            transition: 0.3s;
+            position: relative;
+        }
+        .book-card:hover { transform: scale(1.05) rotate(2deg); z-index: 5; }
+        .book-card img { width: 100%; height: 250px; object-fit: cover; border: 3px solid var(--pop-black); }
+        .book-card h3 { font-size: 1rem; margin: 10px 0; height: 40px; overflow: hidden; }
+
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .remove-btn {
+            position: absolute; top: -15px; right: -15px;
+            background: var(--pop-pink); color: white;
+            border: 4px solid var(--pop-black); border-radius: 50%;
+            width: 40px; height: 40px; font-size: 1.2rem;
+            cursor: pointer; box-shadow: 4px 4px 0px var(--pop-black);
+            transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex; align-items: center; justify-content: center; z-index: 10;
+        }
+        .remove-btn:hover { transform: scale(1.2) rotate(90deg); background: var(--pop-yellow); color: var(--pop-black); }
+
+        .book-card.removing { animation: powFallDown 0.6s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards; pointer-events: none; }
+        @keyframes powFallDown {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            20% { transform: scale(1.1) rotate(-10deg); background: var(--pop-pink); opacity: 1; }
+            100% { transform: scale(0) rotate(45deg) translateY(200px); opacity: 0; }
+        }
+
+        .read-btn.clicked { animation: smashClick 0.3s ease-out forwards; }
+        .menu-item.clicked { animation: smashClick 0.3s ease-out forwards; } /* ✨ 新增：为菜单项准备的点击动画 */
+
+        @keyframes smashClick {
+            0% { transform: scale(1); }
+            40% { transform: scale(0.8); background: var(--pop-yellow); color: var(--pop-black); box-shadow: 0px 0px 0px var(--pop-black); }
+            100% { transform: scale(1.1); background: var(--pop-green); color: var(--pop-black); box-shadow: 12px 12px 0px var(--pop-black); }
+        }
+
+        .user-menu-container { position: relative; display: inline-block; }
+        .user-avatar-btn {
+            background: var(--pop-pink); color: var(--pop-white);
+            border: 4px solid var(--pop-black); padding: 10px 20px; font-size: 1.2rem;
+            cursor: pointer; box-shadow: 5px 5px 0px var(--pop-black); text-transform: uppercase;
+            transition: all 0.2s ease-out; display: flex; align-items: center; gap: 10px;
+        }
+        .user-avatar-btn:hover { transform: translate(-4px, -4px) rotate(-3deg); box-shadow: 9px 9px 0px var(--pop-black); background: var(--pop-yellow); color: var(--pop-black); }
+
+        .pop-menu {
+            display: none; position: absolute; top: 130%; right: 0;
+            background: var(--pop-white); border: 5px solid var(--pop-black);
+            box-shadow: 12px 12px 0px var(--pop-black); min-width: 220px; z-index: 999; transform-origin: top right;
+        }
+        .pop-menu.active { display: block; animation: powOpen 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
+        @keyframes powOpen { 0% { opacity: 0; transform: scale(0) rotate(-30deg); } 100% { opacity: 1; transform: scale(1) rotate(0deg); } }
+
+        .menu-item { display: block; padding: 15px 20px; text-decoration: none; color: var(--pop-black); font-size: 1.2rem; border-bottom: 4px solid var(--pop-black); transition: all 0.2s; background: var(--pop-blue); font-weight: bold; }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:hover { background: var(--pop-yellow); padding-left: 30px; color: var(--pop-pink); -webkit-text-stroke: 1px var(--pop-black); }
+        .menu-item.logout { background: var(--pop-pink); color: var(--pop-white); }
+        .menu-item.logout:hover { background: var(--pop-black); color: var(--pop-yellow); }
+
+        /* =========================================
+           ✨ 今日推荐弹窗 (Daily Recommendation)
+           ========================================= */
+        .recom-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(17, 17, 17, 0.8);
+            z-index: 9999;
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .recom-content {
+            background: var(--pop-yellow);
+            border: 8px solid var(--pop-black);
+            box-shadow: 20px 20px 0px var(--pop-pink);
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+            position: relative;
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .recom-content.explode {
+            animation: comicExplosion 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes comicExplosion {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; filter: brightness(2); }
+            50% { transform: scale(1.2) rotate(10deg); opacity: 1; filter: brightness(1.2); }
+            70% { transform: scale(0.9) rotate(-5deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(1); }
+        }
+
+        .recom-content.silk-away {
+            animation: silkFloatAway 0.8s ease-in forwards;
+        }
+
+        @keyframes silkFloatAway {
+            0% { transform: scale(1) translateY(0) rotate(0deg) skewX(0); opacity: 1; border-radius: 0; }
+            30% { transform: scale(1.05) translateY(-20px) skewX(10deg); border-radius: 50% 0 50% 0; background: var(--pop-blue); }
+            100% { transform: scale(0.3) translateY(-600px) translateX(300px) skewX(45deg) rotate(45deg); opacity: 0; border-radius: 50%; background: var(--pop-pink); box-shadow: 0 0 0 transparent; }
+        }
+
+        .recom-title {
+            font-size: 2.5rem; color: var(--pop-white);
+            -webkit-text-stroke: 2px var(--pop-black); text-shadow: 4px 4px 0 var(--pop-black);
+            margin: 0 0 20px 0; transform: rotate(-3deg);
+        }
+
+        .recom-cover {
+            width: 200px; height: 300px; object-fit: cover;
+            border: 5px solid var(--pop-black); box-shadow: 8px 8px 0px var(--pop-black);
+            margin-bottom: 20px; transition: transform 0.3s;
+        }
+        .recom-cover:hover { transform: scale(1.05); }
+
+        .recom-book-name { font-size: 1.5rem; margin-bottom: 20px; background: var(--pop-white); border: 3px solid var(--pop-black); padding: 5px; }
+
+        .recom-actions { display: flex; gap: 10px; justify-content: center; }
+
+        .recom-btn {
+            flex: 1; padding: 15px; font-size: 1.2rem; font-family: 'Impact', sans-serif;
+            border: 4px solid var(--pop-black); cursor: pointer; text-transform: uppercase;
+            transition: all 0.2s; position: relative; overflow: hidden;
+        }
+        .recom-btn-read { background: var(--pop-green); color: var(--pop-black); box-shadow: 6px 6px 0px var(--pop-black); }
+        .recom-btn-add { background: var(--pop-blue); color: var(--pop-black); box-shadow: 6px 6px 0px var(--pop-black); }
+
+        .recom-btn:hover { transform: translateY(-5px); box-shadow: 10px 10px 0px var(--pop-black); }
+        .recom-btn:active { transform: translateY(0); box-shadow: 0px 0px 0px var(--pop-black); }
+
+        .recom-close-btn {
+            position: absolute; top: -20px; right: -20px; width: 50px; height: 50px;
+            background: var(--pop-pink); color: white; border: 5px solid var(--pop-black); border-radius: 50%;
+            font-size: 1.5rem; cursor: pointer; box-shadow: 5px 5px 0px var(--pop-black);
+            transition: all 0.3s; z-index: 10;
+        }
+        .recom-close-btn:hover { transform: rotate(180deg) scale(1.2); background: var(--pop-black); color: var(--pop-pink); }
+    </style>
+</head>
+<body>
+
+<div class="recom-overlay" id="dailyRecomOverlay">
+    <div class="recom-content" id="dailyRecomContent">
+        <button class="recom-close-btn" onclick="closeRecommendation()">✖</button>
+        <h2 class="recom-title">BOOM! PICK</h2>
+        <img src="" class="recom-cover" id="recomCover" alt="Daily Recommendation">
+        <div class="recom-book-name" id="recomBookName">Loading...</div>
+        <div class="recom-actions">
+            <button class="recom-btn recom-btn-read" id="recomReadBtn">READ NOW</button>
+            <button class="recom-btn recom-btn-add" id="recomAddBtn">ADD TO LIST</button>
+        </div>
+    </div>
+</div>
+
+<div class="main-grid">
+    <div class="search-section">
+        <h2>🌐 Global Search</h2>
+        <div class="search-bar">
+            <input type="text" id="query" placeholder="搜索书名或作者...">
+            <button onclick="searchExternal()"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <div id="searchResults">
+            <p style="text-align: center; color: #111; font-weight: bold;">输入关键词从全球书库检索</p>
+        </div>
+    </div>
+
+    <div class="my-library">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 id="userNameDisplay">📚 My Collection</h2>
+
+            <div class="user-menu-container">
+                <button class="user-avatar-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-user-astronaut"></i> <span id="navUsername">USER</span>
+                </button>
+
+                <div class="pop-menu" id="userMenu">
+                    <a href="#" class="menu-item" onclick="goToAccount(this, event)"><i class="fa-solid fa-gear"></i> 账号管理</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-palette"></i> 个性装扮</a>
+                    <a href="#" onclick="doLogout()" class="menu-item logout"><i class="fa-solid fa-door-open"></i> 登出账号</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="book-grid" id="myBooks"></div>
+    </div>
+</div>
+
+<script>
+    const currentUsername = localStorage.getItem('username');
+
+    if (!currentUsername) {
+        alert("检测到未登录，正在前往登录页...");
+        window.location.href = "login.html";
+    }
+
+    document.getElementById('navUsername').innerText = currentUsername;
+
+    function toggleMenu() { document.getElementById('userMenu').classList.toggle('active'); }
+
+    document.addEventListener('click', function(event) {
+        const container = document.querySelector('.user-menu-container');
+        const menu = document.getElementById('userMenu');
+        if (!container.contains(event.target) && menu.classList.contains('active')) {
+            menu.classList.remove('active');
+        }
+    });
+
+    // ✨ 新增：带有波普特效的平滑跳转
+    function goToAccount(btnElement, event) {
+        event.preventDefault(); // 阻止 <a> 标签默认跳转
+        btnElement.classList.add('clicked'); // 添加点击砸击特效
+
+        setTimeout(() => {
+            btnElement.classList.remove('clicked');
+            window.location.href = "account.html"; // 等动画播完再切页面
+        }, 300);
+    }
+
+    function doLogout() {
+        localStorage.removeItem('username');
+        alert("💥 POOF! 您已成功登出！");
+        window.location.href = "login.html";
+    }
+
+    // --- 🍏 完美支持中文的苹果图书 API + 微信读书“偷梁换柱”大招 ---
+    let isSearching = false;
+
+    async function searchExternal() {
+        if (isSearching) return;
+
+        const q = document.getElementById('query').value;
+        if(!q) return;
+
+        const resultsDiv = document.getElementById('searchResults');
+        resultsDiv.innerHTML = "<strong style='color:var(--pop-pink); font-size:1.5rem;'>⚡️ SEARCHING...</strong>";
+        isSearching = true;
+
+        try {
+            const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=ebook&limit=10`);
+
+            if (!res.ok) throw new Error('API Response Error');
+            const data = await res.json();
+
+            if (!data.results || data.results.length === 0) {
+                resultsDiv.innerHTML = "<strong style='color:var(--pop-black);'>NO BOOKS FOUND! 😭 换个词试试？</strong>";
+                return;
+            }
+
+            resultsDiv.innerHTML = data.results.map(item => {
+                const cover = item.artworkUrl100
+                    ? item.artworkUrl100.replace('100x100', '300x300')
+                    : 'https://placehold.co/60x80/111111/FFDE00?text=NO+COVER';
+
+                const safeTitle = item.trackName ? item.trackName.replace(/'/g, "\\'") : 'Unknown Title';
+                const safeAuthor = item.artistName ? item.artistName.replace(/'/g, "\\'") : 'Unknown Author';
+
+                // 💥 抛弃苹果死链接，生成微信读书网页版搜索直达链接！
+                const readLink = `https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(safeTitle)}`;
+
+                const isbn = item.trackId ? item.trackId.toString() : 'N/A';
+
+                return `
+                    <div class="search-item">
+                        <img src="${cover}">
+                        <div class="info">
+                            <h4>${safeTitle}</h4>
+                            <p>${safeAuthor}</p>
+                            <button class="add-btn" onclick="addToMyList('${safeTitle}', '${safeAuthor}', '${cover}', '${isbn}', '${readLink}')">ADD TO LIST</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (e) {
+            console.error("搜索出错了:", e);
+            resultsDiv.innerHTML = "<strong style='color:var(--pop-black);'>网络开小差了，请重试！</strong>";
+        } finally {
+            isSearching = false;
+        }
+    }
+
+    async function addToMyList(title, author, cover, isbn, readLink) {
+        const bookData = { title, author, coverUrl: cover, isbn, readUrl: readLink, username: currentUsername };
+        try {
+            const res = await fetch('/api/user/add-book', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(bookData)
+            });
+
+            if(res.ok) {
+                const resultText = await res.text();
+
+                if (resultText === "SUCCESS") {
+                    alert("✨ 成功加入你的私人书单！");
+                    loadMyBooks();
+                } else if (resultText === "ALREADY_ADDED") {
+                    alert("😎 嘿！这本书已经在你的书架上啦，不用重复添加哦！");
+                } else {
+                    alert("添加完成！");
+                    loadMyBooks();
+                }
+            } else {
+                alert("Failed to add book.");
+            }
+        } catch (e) {
+            console.error("Error adding book:", e);
+        }
+    }
+
+    function openReadLink(url) {
+        if (url && url !== 'null' && url !== '' && url !== '#') window.open(url, '_blank');
+        else alert('💥 OOPS! 这本旧书或该资源暂时没有提供在线阅读链接哦！');
+    }
+
+    function playClickAnimation(btnElement) {
+        btnElement.classList.add('clicked');
+        setTimeout(() => {
+            btnElement.classList.remove('clicked');
+        }, 300);
+    }
+
+    function handleReadClick(btnElement, url) {
+        playClickAnimation(btnElement);
+        setTimeout(() => {
+            openReadLink(url);
+        }, 300);
+    }
+
+    async function loadMyBooks() {
+        try {
+            const res = await fetch(`/api/user/books?username=${currentUsername}`);
+            if(!res.ok) return;
+            const books = await res.json();
+            const grid = document.getElementById('myBooks');
+
+            grid.innerHTML = books.map(b => `
+                <div class="book-card" id="book-card-${b.id}">
+                    <button class="remove-btn" onclick="removeBook(${b.id}, event)" title="Remove">✖</button>
+                    <img src="${b.coverUrl}">
+                    <h3>${b.title}</h3>
+                    <p>By: ${b.author}</p>
+                    <button class="add-btn read-btn" style="width:100%; background:var(--pop-black)" onclick="handleReadClick(this, '${b.readUrl}')">READ NOW</button>
+                </div>
+            `).join('');
+        } catch (e) { console.error("Error loading books:", e); }
+    }
+
+    async function removeBook(bookId, event) {
+        event.stopPropagation();
+        const card = document.getElementById(`book-card-${bookId}`);
+        if (!confirm("💥 POW! 确定要把它踢出你的书单吗？")) return;
+
+        card.classList.add('removing');
+        try {
+            const res = await fetch('/api/user/remove-book', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: currentUsername, bookId: bookId.toString() })
+            });
+            if(res.ok) setTimeout(() => { card.remove(); }, 600);
+            else { alert("Oops! 移除失败，请重试！"); card.classList.remove('removing'); }
+        } catch (e) { console.error("Error removing book:", e); card.classList.remove('removing'); }
+    }
+
+    /* =========================================
+       ✨ 今日推荐的逻辑控制
+       ========================================= */
+    async function checkDailyRecommendation() {
+        try {
+            const res = await fetch('/api/user/random-book');
+            if (!res.ok) return;
+            const book = await res.json();
+
+            if (book && book.title) {
+                document.getElementById('recomCover').src = book.coverUrl || 'https://via.placeholder.com/200x300';
+                document.getElementById('recomBookName').innerText = book.title;
+
+                const readBtn = document.getElementById('recomReadBtn');
+                readBtn.onclick = () => handleReadClick(readBtn, book.readUrl);
+
+                // --- 💥 核心修复：排队执行动画与 alert ---
+                const addBtn = document.getElementById('recomAddBtn');
+                addBtn.onclick = () => {
+                    playClickAnimation(addBtn); // 1. 先播放按钮变色的砸击动画 (耗时 300ms)
+
+                    setTimeout(() => {
+                        closeRecommendation(); // 2. 按钮弹完后，开始播放丝带飘走动画 (耗时 800ms)
+
+                        // 3. 等待飘走动画彻底放完，再向后台发请求并弹 alert！
+                        setTimeout(() => {
+                            addToMyList(book.title, book.author, book.coverUrl, book.isbn, book.readUrl);
+                        }, 800);
+
+                    }, 300);
+                };
+
+                document.getElementById('dailyRecomOverlay').style.display = 'flex';
+                document.getElementById('dailyRecomContent').classList.add('explode');
+            }
+        } catch (e) {
+            console.error("无法获取推荐书籍:", e);
+        }
+    }
+
+    function closeRecommendation() {
+        const content = document.getElementById('dailyRecomContent');
+        content.classList.remove('explode');
+        content.classList.add('silk-away');
+
+        setTimeout(() => {
+            document.getElementById('dailyRecomOverlay').style.display = 'none';
+            content.classList.remove('silk-away');
+        }, 800);
+    }
+
+    loadMyBooks();
+    setTimeout(checkDailyRecommendation, 1000);
+
+</script>
+</body>
+</html>
