@@ -287,13 +287,15 @@
 </div>
 
 <script>
+    // ==========================================
+    // 🛡️ 安保大闸：用户登录校验
+    // ==========================================
     const currentUsername = localStorage.getItem('username');
-
     if (!currentUsername) {
-        alert("检测到未登录，正在前往登录页...");
+        alert("⚠️ 检测到非法入侵，正在驱逐至验证区...");
         window.location.href = "login.html";
+        throw new Error("Access Denied");
     }
-
     document.getElementById('navUsername').innerText = currentUsername;
 
     function toggleMenu() { document.getElementById('userMenu').classList.toggle('active'); }

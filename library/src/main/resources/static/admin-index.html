@@ -282,9 +282,16 @@
 
 <script>
     // 初始化读取管理员名字
-    const adminName = localStorage.getItem('admin_username') || 'SUPER_ADMIN';
+    // ==========================================
+    // 🛡️ 顶级安保：管理员权限校验
+    // ==========================================
+    const adminName = localStorage.getItem('admin_username');
+    if (!adminName) {
+        alert("🛑 INTRUDER DETECTED! 未经授权，禁止访问！");
+        window.location.href = "login.html";
+        throw new Error("Access Denied"); // 💥 直接切断执行，页面冻结！
+    }
     document.getElementById('currentAdminName').innerText = adminName;
-
     // 退出登录
     function logoutAdmin() {
         localStorage.removeItem('admin_username');

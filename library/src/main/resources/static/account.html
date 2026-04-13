@@ -203,7 +203,15 @@
 <canvas id="canvasElement" style="display:none;"></canvas>
 
 <script>
-    const currentUsername = localStorage.getItem('username') || 'GUEST';
+    // ==========================================
+    // 🛡️ 安保大闸：用户登录校验
+    // ==========================================
+    const currentUsername = localStorage.getItem('username');
+    if (!currentUsername) {
+        alert("⚠️ 请先扫描面部验证身份！");
+        window.location.href = "login.html";
+        throw new Error("Access Denied"); // 💥 直接切断执行
+    }
     document.getElementById('accUsername').innerText = currentUsername;
 
     // --- ✨ 3D 翻转逻辑 ---
