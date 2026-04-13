@@ -66,20 +66,29 @@
 ## 📂 目录结构 (Directory Structure)
 
 ```text
-├── library/                 # ☕ Java Spring Boot 后端工程
+├── library/                                  # ☕ Java Spring Boot 后端主工程
+│   ├── build.gradle                          # Gradle 依赖配置
 │   ├── src/main/java/org/example/library/
-│   │   ├── config/          # WebSocket 与 CORS 跨域安全配置
-│   │   ├── controller/      # API 路由控制器 (Chat, Login, User, Admin)
-│   │   ├── entity/          # JPA 实体类映射 (User, Book, ChatMessage等)
-│   │   └── repository/      # 数据访问层接口 (CRUD)
-│   ├── src/main/resources/  # 配置文件 (application-dev / prod)
-│   └── build.gradle         # Gradle 依赖配置
-├── python/                  # 🐍 Python AI 人脸识别微服务
-│   ├── server.py            # AI 引擎入口
-│   └── requirements.txt     # Python 依赖清单
-├── static/                  # 🎨 前端页面源文件 (HTML/CSS/JS)
-│   ├── index.html, chat.html, admin-index.html ...
-└── pop_library.sql          # 💾 MySQL 数据库结构与初始数据备份
+│   │   ├── config/                           # WebSocket 与 CORS 跨域安全配置
+│   │   ├── controller/                       # API 路由控制层 (Chat, Login, User, Admin 等)
+│   │   ├── entity/                           # JPA 实体类映射模型 (User, Book, ChatMessage 等)
+│   │   ├── repository/                       # 数据访问接口层 (CRUD 操作)
+│   │   └── LibraryApplication.java           # Spring Boot 主启动类
+│   └── src/main/resources/
+│       ├── static/                           # 🎨 独立前端页面源文件 (原生 HTML/CSS/JS)
+│       │   ├── account.html                  # 个人中心 (3D 卡片翻转)
+│       │   ├── admin-index.html              # 管理员中控台
+│       │   ├── chat.html                     # 波普聊天室
+│       │   ├── login.html                    # 刷脸登录/注册验证
+│       │   └── user-index.html               # 发现与收藏主页
+│       ├── application.properties            # 基础环境配置
+│       ├── application-dev.properties        # 本地开发环境配置 (本地 MySQL)
+│       └── application-prod.properties       # 云端生产环境配置 (跨域域名白名单)
+├── python/                                   # 🐍 Python AI 人脸识别微服务
+│   ├── server.py                             # AI 引擎入口点
+│   └── requirements.txt                      # 运行环境依赖清单
+├── .gitignore                                # Git 忽略文件规则
+└── README.md                                 # 项目说明文档
 ```
 
 ---
@@ -87,7 +96,7 @@
 ## 🚀 如何在本地运行 (Quick Start)
 
 ### 1. 初始化数据库
-在本地 MySQL (端口 3306) 中创建名为 `pop_library` 的数据库。
+在本地 MySQL (端口 3306) 中创建名为 `pop_library` 的数据库，并导入相关的表结构和初始数据。
 
 ### 2. 启动 Python AI 引擎
 ```bash
@@ -97,9 +106,9 @@ python server.py  # 默认运行在 5000 端口
 ```
 
 ### 3. 启动 Java 后端
-使用 IDEA / Eclipse 打开 `library` 文件夹：
+使用 IDEA 打开项目根目录：
 1. 刷新 Gradle 依赖。
-2. 在 `application-dev.properties` 中配置你的本地数据库账号密码。
+2. 确保在 `application-dev.properties` 中配置了正确的本地数据库账号密码。
 3. 运行 `LibraryApplication.java`。
 4. 在浏览器打开 `http://localhost:8080/login.html` 即可开始体验！
 
@@ -107,7 +116,7 @@ python server.py  # 默认运行在 5000 端口
 
 ## 🌐 线上服务器部署指南 (Docker + Nginx)
 
-项目已完全支持容器化，可通过 Docker 部署至云服务器（如 Aliyun / AWS）。
+项目已完全支持容器化，可通过 Docker 部署至云服务器（如 Aliyun / AWS / Tencent Cloud）。
 
 **1. 构建 Java 生产镜像:**
 ```bash
