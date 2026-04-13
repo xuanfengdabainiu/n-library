@@ -9,6 +9,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
+@CrossOrigin(originPatterns = "${cors.allowed.origin-patterns}", allowCredentials = "true")
 public class AdminController {
 
     // 假设你有一个 AdminRepository 用于操作 admins 表

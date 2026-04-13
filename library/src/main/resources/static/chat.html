@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>POP! 图书交流群</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        :root {
+            --pop-yellow: #FFDE00; --pop-pink: #FF3366; --pop-blue: #00E5FF;
+            --pop-green: #00FF66; --pop-black: #111111; --pop-white: #ffffff;
+        }
+        body {
+            font-family: 'Impact', '黑体', sans-serif; background-color: #f0f0f0;
+            background-image: radial-gradient(var(--pop-blue) 10%, transparent 11%);
+            background-size: 20px 20px; margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; height: 100vh; box-sizing: border-box;
+        }
+
+        /* 聊天室主容器 */
+        .chat-container {
+            width: 100%; max-width: 800px; height: 90vh;
+            background: var(--pop-white); border: 8px solid var(--pop-black);
+            box-shadow: 15px 15px 0px var(--pop-black);
+            display: flex; flex-direction: column; position: relative;
+        }
+
+        /* 头部栏 */
+        .chat-header {
+            background: var(--pop-yellow); border-bottom: 8px solid var(--pop-black);
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-header h2 { margin: 0; font-size: 2rem; -webkit-text-stroke: 1px var(--pop-black); color: var(--pop-white); text-shadow: 3px 3px 0 var(--pop-black); transform: rotate(-2deg); }
+        .badge { background: var(--pop-pink); color: white; padding: 5px 10px; border: 3px solid var(--pop-black); font-size: 1.2rem; transform: rotate(3deg); box-shadow: 3px 3px 0 var(--pop-black);}
+        .back-btn { background: var(--pop-black); color: var(--pop-white); border: none; padding: 10px 15px; font-size: 1rem; cursor: pointer; font-family: 'Impact'; transition: 0.2s;}
+        .back-btn:hover { background: var(--pop-green); color: var(--pop-black); transform: scale(1.1); }
+
+        /* 聊天消息区 */
+        .chat-box {
+            flex: 1; padding: 20px; overflow-y: auto; background: var(--pop-white);
+            background-image: radial-gradient(#ddd 10%, transparent 11%); background-size: 15px 15px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        /* 消息气泡公用样式 */
+        .message-wrapper { display: flex; flex-direction: column; max-width: 70%; animation: popIn 0.3s ease-out forwards; }
+        .message-sender { font-size: 0.9rem; font-weight: bold; margin-bottom: 5px; color: var(--pop-black); }
+        .message-bubble {
+            padding: 12px 18px; border: 4px solid var(--pop-black); font-size: 1.2rem;
+            font-family: sans-serif; font-weight: bold; line-height: 1.4; position: relative;
+        }
+
+        /* 别人发的消息 (左侧) */
+        .msg-others { align-self: flex-start; }
+        .msg-others .message-bubble { background: var(--pop-green); border-radius: 0 20px 20px 20px; box-shadow: 6px 6px 0px var(--pop-black); }
+
+        /* 自己发的消息 (右侧) */
+        .msg-self { align-self: flex-end; align-items: flex-end; }
+        .msg-self .message-bubble { background: var(--pop-blue); border-radius: 20px 0 20px 20px; box-shadow: -6px 6px 0px var(--pop-black); }
+
+        /* 底部输入区 */
+        .chat-input-area {
+            background: var(--pop-pink); border-top: 8px solid var(--pop-black);
+            padding: 15px; display: flex; gap: 10px; align-items: stretch;
+        }
+        .chat-input-area input {
+            flex: 1; border: 5px solid var(--pop-black); padding: 15px; font-size: 1.2rem;
+            font-family: '黑体', sans-serif; font-weight: bold; outline: none;
+        }
+        .chat-input-area input:focus { background: var(--pop-yellow); }
+        .send-btn {
+            background: var(--pop-white); color: var(--pop-black); border: 5px solid var(--pop-black);
+            padding: 0 25px; font-size: 1.5rem; cursor: pointer; font-family: 'Impact';
+            box-shadow: 6px 6px 0px var(--pop-black); transition: 0.1s;
+        }
+        .send-btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px var(--pop-black); background: var(--pop-yellow); }
+
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* 系统提示消息 */
+        .system-msg { align-self: center; background: var(--pop-black); color: var(--pop-yellow); padding: 5px 15px; font-size: 0.8rem; border-radius: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <button class="back-btn" onclick="window.location.href='user-index.html'"><i class="fa-solid fa-arrow-left"></i> LEAVE</button>
+        <h2>POP! CHAT</h2>
+        <div class="badge">发言 -10 🪙</div>
+    </div>
+
+    <div class="chat-box" id="chatBox">
+        <div class="system-msg">🔌 正在连接波普电波...</div>
+    </div>
+
+    <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="在这里输入消息... (如果没钱发不出去哦!)" onkeypress="handleEnter(event)">
+        <button class="send-btn" onclick="sendMessage()">POW! 发送</button>
+    </div>
+</div>
+
+<script>
+    const currentUsername = localStorage.getItem('username');
+    if (!currentUsername) {
+        alert("未登录！"); window.location.href = "login.html";
+    }
+
+    let stompClient = null;
+    const chatBox = document.getElementById('chatBox');
+
+    // 1. 初始化页面：先拉历史，再连 WebSocket
+    window.onload = function() {
+        loadHistory();
+        connectWebSocket();
+    };
+
+    // 2. 拉取历史记录 (咱们 Java 刚才写的接口)
+    async function loadHistory() {
+        try {
+            const res = await fetch('/api/chat/history');
+            if (res.ok) {
+                const historyData = await res.json();
+                chatBox.innerHTML = '<div class="system-msg">📜 以上是历史消息记录</div>';
+                historyData.forEach(msg => {
+                    renderMessage(msg.sender, msg.content);
+                });
+                scrollToBottom();
+            }
+        } catch (e) {
+            console.error("加载历史记录失败", e);
+        }
+    }
+
+    // 3. 连接全双工 WebSocket
+    function connectWebSocket() {
+        // 连接配置类里的 /pop-chat 端点
+        let socket = new SockJS('/pop-chat');
+        stompClient = Stomp.over(socket);
+
+        // 关闭底层的啰嗦日志
+        stompClient.debug = null;
+
+        stompClient.connect({}, function (frame) {
+            document.querySelector('.system-msg').innerText = "🟢 连接成功！你可以开始聊天了！";
+
+            // 订阅公共频道
+            stompClient.subscribe('/topic/public', function (messageOutput) {
+                let msgData = JSON.parse(messageOutput.body);
+                // 收到广播后，把消息画到屏幕上
+                renderMessage(msgData.sender, msgData.content);
+            });
+        }, function(error) {
+            document.querySelector('.system-msg').innerText = "🔴 连接断开，请刷新重试。";
+        });
+    }
+
+    // 4. 发送消息到服务器扣费
+    function sendMessage() {
+        let inputField = document.getElementById('chatInput');
+        let content = inputField.value.trim();
+
+        if (content === '') return;
+
+        if (stompClient && stompClient.connected) {
+            // 将消息发送到 Controller 的 @MessageMapping("/send")
+            stompClient.send("/app/send", {}, JSON.stringify({
+                'sender': currentUsername,
+                'content': content
+            }));
+
+            // ⚠️ 注意：这里前端并不会立刻画出消息。
+            // 只有当后端确认你钱够了、扣费成功了，后端广播回 /topic/public，
+            // 咱们的 subscribe 才会收到消息并画出来。
+            // 如果你点发送后没反应，说明你没钱被服务器拦截了！
+
+            inputField.value = ''; // 清空输入框
+        } else {
+            alert("连接未建立，请稍后再试！");
+        }
+    }
+
+    // 回车键快速发送
+    function handleEnter(event) {
+        if (event.key === "Enter") sendMessage();
+    }
+
+    // 5. 将消息渲染到屏幕上的核心逻辑
+    function renderMessage(sender, content) {
+        const isSelf = (sender === currentUsername);
+        const wrapperDiv = document.createElement('div');
+
+        // 判断是自己还是别人，赋予不同的波普样式
+        wrapperDiv.className = isSelf ? 'message-wrapper msg-self' : 'message-wrapper msg-others';
+
+        wrapperDiv.innerHTML = `
+            <div class="message-sender">${isSelf ? 'ME' : sender}</div>
+            <div class="message-bubble">${content}</div>
+        `;
+
+        chatBox.appendChild(wrapperDiv);
+        scrollToBottom();
+    }
+
+    // 让滚动条始终保持在最底部
+    function scrollToBottom() {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>
+
+</body>
+</html>

@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin
+@CrossOrigin(originPatterns = "${cors.allowed.origin-patterns}", allowCredentials = "true")
 public class UserBookController {
 
     @Autowired private BookRepository bookRepository;

@@ -13,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/dashboard")
+@CrossOrigin(originPatterns = "${cors.allowed.origin-patterns}", allowCredentials = "true")
 public class AdminDashboardController {
 
     @Autowired

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "${cors.allowed.origin-patterns}", allowCredentials = "true")
 @RequestMapping("/api")
 public class LoginController {
 

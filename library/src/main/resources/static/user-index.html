@@ -276,7 +276,7 @@
 
                 <div class="pop-menu" id="userMenu">
                     <a href="#" class="menu-item" onclick="goToAccount(this, event)"><i class="fa-solid fa-gear"></i> 账号管理</a>
-                    <a href="#" class="menu-item"><i class="fa-solid fa-palette"></i> 个性装扮</a>
+                    <a href="#" class="menu-item" onclick="goToChat(this, event)"><i class="fa-solid fa-comments"></i> 图书交流 <span style="font-size:0.8rem; color:var(--pop-pink);">(10🪙/次)</span></a>
                     <a href="#" onclick="doLogout()" class="menu-item logout"><i class="fa-solid fa-door-open"></i> 登出账号</a>
                 </div>
             </div>
@@ -531,6 +531,15 @@
     loadMyBooks();
     setTimeout(checkDailyRecommendation, 1000);
 
+    // ✨ 前往聊天室的特效跳转
+    function goToChat(btnElement, event) {
+        event.preventDefault();
+        btnElement.classList.add('clicked');
+        setTimeout(() => {
+            btnElement.classList.remove('clicked');
+            window.location.href = "chat.html"; // 跳转到新建的聊天页
+        }, 300);
+    }
 </script>
 </body>
 </html>
