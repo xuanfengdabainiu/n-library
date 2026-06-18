@@ -20,7 +20,7 @@
             background-size: 30px 30px;
             background-position: 0 0, 15px 15px;
             animation: bgScroll 20s linear infinite;
-            font-family: 'Impact', sans-serif;
+            font-family: 'Impact', '黑体', sans-serif;
             perspective: 1500px;
             overflow: hidden;
         }
@@ -31,14 +31,14 @@
         .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: var(--pop-white); border: 8px solid var(--pop-black); box-shadow: 25px 25px 0px var(--pop-black); padding: 30px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
         .register-face { transform: rotateY(180deg); background: var(--pop-yellow); }
 
-        h1 { font-size: 2.5rem; margin: 10px 0; -webkit-text-stroke: 1.5px var(--pop-black); text-transform: uppercase; color: var(--pop-pink); animation: pulse 1.5s infinite alternate; }
+        h1 { font-size: 2.5rem; margin: 10px 0; -webkit-text-stroke: 1.5px var(--pop-black); text-transform: uppercase; color: var(--pop-pink); animation: pulse 1.5s infinite alternate; font-family: 'Impact', '黑体', sans-serif;}
         .camera-box { width: 100%; height: 280px; border: 5px solid var(--pop-black); background: #000; position: relative; overflow: hidden; box-shadow: 8px 8px 0px var(--pop-black); }
         video { width: 100%; height: 100%; object-fit: cover; }
         .scan-line { position: absolute; width: 100%; height: 6px; background: var(--pop-green); z-index: 5; animation: scan 2s infinite ease-in-out; }
         .input-group { width: 100%; margin: 15px 0; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border: 4px solid var(--pop-black); font-size: 1rem; font-weight: bold; box-sizing: border-box; font-family: 'Impact'; letter-spacing: 2px; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border: 4px solid var(--pop-black); font-size: 1rem; font-weight: bold; box-sizing: border-box; font-family: 'Impact', '黑体', sans-serif; letter-spacing: 2px; }
 
-        .btn { width: 100%; padding: 15px; border: 4px solid var(--pop-black); background: var(--pop-green); font-size: 1.5rem; box-shadow: 6px 6px 0px var(--pop-black); cursor: pointer; transition: 0.1s; text-transform: uppercase; font-family: 'Impact'; }
+        .btn { width: 100%; padding: 15px; border: 4px solid var(--pop-black); background: var(--pop-green); font-size: 1.5rem; box-shadow: 6px 6px 0px var(--pop-black); cursor: pointer; transition: 0.1s; text-transform: uppercase; font-family: 'Impact', '黑体', sans-serif; }
         .btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px; }
         .toggle-btn { margin-top: 20px; color: var(--pop-black); cursor: pointer; text-decoration: underline; font-weight: bold; }
 
@@ -53,7 +53,7 @@
            ========================================= */
 
         /* 触发按钮 */
-        .admin-trigger { position: fixed; bottom: 30px; right: 30px; background: var(--pop-yellow); color: var(--pop-black); border: 5px solid var(--pop-black); padding: 10px 20px; font-size: 1.5rem; font-family: 'Impact'; cursor: pointer; box-shadow: 6px 6px 0 var(--pop-black); z-index: 50; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .admin-trigger { position: fixed; bottom: 30px; right: 30px; background: var(--pop-yellow); color: var(--pop-black); border: 5px solid var(--pop-black); padding: 10px 20px; font-size: 1.5rem; font-family: 'Impact', '黑体', sans-serif; cursor: pointer; box-shadow: 6px 6px 0 var(--pop-black); z-index: 50; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-weight: bold; }
         .admin-trigger:hover { transform: scale(1.1) rotate(-5deg); background: var(--pop-blue); }
 
         /* 模态框遮罩 */
@@ -65,7 +65,7 @@
         @keyframes slamDown { 0% { transform: translateZ(800px) translateY(-500px) rotateX(45deg); opacity: 0; } 100% { transform: translateZ(0) translateY(0) rotateX(0); opacity: 1; } }
 
         /* 特效 2：镜头色散故障字 (Chromatic Aberration) */
-        .glitch-lens { font-size: 3.5rem; color: var(--pop-white); margin-bottom: 20px; text-transform: uppercase; animation: chromaticGlitch 0.2s infinite alternate; text-align: center; line-height: 1; }
+        .glitch-lens { font-size: 3.5rem; color: var(--pop-white); margin-bottom: 20px; text-transform: uppercase; animation: chromaticGlitch 0.2s infinite alternate; text-align: center; line-height: 1.1; font-family: 'Impact', '黑体', sans-serif; }
         @keyframes chromaticGlitch {
             0% { text-shadow: 3px 0 0 rgba(255,0,0,0.8), -3px 0 0 rgba(0,255,255,0.8); }
             100% { text-shadow: -3px 0 0 rgba(255,0,0,0.8), 3px 0 0 rgba(0,255,255,0.8); }
@@ -104,7 +104,7 @@
 <div class="shutter-flash-layer" id="shutterEffect"></div>
 
 <button class="admin-trigger" onclick="openAdminModal()">
-    <i class="fa-solid fa-user-shield"></i> STAFF ONLY
+    <i class="fa-solid fa-user-shield"></i> 管理员入口
 </button>
 
 <div class="admin-overlay" id="adminModal">
@@ -116,41 +116,41 @@
 
         <button class="close-admin" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
 
-        <h2 class="glitch-lens">TOP SECRET<br>ACCESS</h2>
+        <h2 class="glitch-lens">最高机密<br>访问权限</h2>
 
-        <input type="text" id="adminUser" class="admin-input" placeholder="STAFF ID">
-        <input type="password" id="adminPass" class="admin-input" placeholder="OVERRIDE CODE">
+        <input type="text" id="adminUser" class="admin-input" placeholder="管理员工号">
+        <input type="password" id="adminPass" class="admin-input" placeholder="安全覆写密钥">
 
-        <button class="btn btn-admin" onclick="handleAdminLogin()">INITIATE OVERRIDE</button>
+        <button class="btn btn-admin" onclick="handleAdminLogin()">验证特权身份</button>
         <div id="adminStatus" style="margin-top:15px; color: var(--pop-yellow); font-size: 1.2rem; font-weight: bold; text-align: center;"></div>
     </div>
 </div>
 
 <div class="flip-container" id="card">
     <div class="card-face login-face">
-        <h1>FACE LOGIN</h1>
+        <h1>人脸识别登录</h1>
         <div class="camera-box">
             <div class="scan-line"></div>
             <video id="videoLogin" autoplay muted playsinline></video>
         </div>
-        <p style="color: var(--pop-pink); font-weight: bold; font-size: 1.2rem;">SCAN YOUR FACE TO ENTER</p>
-        <button class="btn" onclick="handleAuth('login')">VERIFY ME!</button>
+        <p style="color: var(--pop-pink); font-weight: bold; font-size: 1.2rem;">请将面部对准扫描框以进入系统</p>
+        <button class="btn" onclick="handleAuth('login')">开始验证身份！</button>
         <div id="statusLogin" style="margin-top:10px; font-weight: bold; font-size: 1.2rem;"></div>
-        <span class="toggle-btn" onclick="toggleCard()">NEED AN ACCOUNT? REGISTER</span>
+        <span class="toggle-btn" onclick="toggleCard()">没有账号？点击注册身份</span>
     </div>
 
     <div class="card-face register-face">
-        <h1 style="color: var(--pop-black)">JOIN US!</h1>
+        <h1 style="color: var(--pop-black)">加入波普宇宙！</h1>
         <div class="camera-box" style="height: 200px;">
             <video id="videoReg" autoplay muted playsinline></video>
         </div>
         <div class="input-group">
-            <input type="text" id="regUser" placeholder="NEW USERNAME">
-            <input type="password" id="regPass" placeholder="NEW PASSWORD">
+            <input type="text" id="regUser" placeholder="设置新账户名">
+            <input type="password" id="regPass" placeholder="设置安全密码">
         </div>
-        <button class="btn" style="background: var(--pop-blue)" onclick="handleAuth('register')">CREATE IDENTITY</button>
+        <button class="btn" style="background: var(--pop-blue)" onclick="handleAuth('register')">创建数字身份</button>
         <div id="statusReg" style="margin-top:10px; font-weight: bold; font-size: 1.2rem;"></div>
-        <span class="toggle-btn" onclick="toggleCard()">ALREADY A MEMBER? LOGIN</span>
+        <span class="toggle-btn" onclick="toggleCard()">已有账号？点击刷脸登录</span>
     </div>
 </div>
 
@@ -167,7 +167,7 @@
             document.getElementById('videoLogin').srcObject = stream;
             document.getElementById('videoReg').srcObject = stream;
         } catch (e) {
-            console.log("Camera access denied or unavailable.");
+            console.log("无法访问摄像头或权限被拒绝。");
         }
     }
 
@@ -182,7 +182,7 @@
         const status = document.getElementById(isReg ? 'statusReg' : 'statusLogin');
         const video = document.getElementById(isReg ? 'videoReg' : 'videoLogin');
 
-        status.innerText = "PROCESSING...";
+        status.innerText = "处理中，请对准摄像头...";
         status.classList.remove('error-shake');
 
         const context = canvas.getContext('2d');
@@ -194,7 +194,7 @@
             payload.username = document.getElementById('regUser').value;
             payload.password = document.getElementById('regPass').value;
             if (!payload.username || !payload.password) {
-                status.innerText = "MISSING INFO!";
+                status.innerText = "信息不完整！";
                 status.classList.add('error-shake');
                 return;
             }
@@ -210,17 +210,17 @@
             const result = await response.json();
 
             if (result.success) {
-                status.innerText = "SUCCESS! REDIRECTING...";
+                status.innerText = "验证成功！正在跳转...";
                 status.style.color = "var(--pop-green)";
                 localStorage.setItem('username', result.userName);
                 setTimeout(() => window.location.href = "/user-index.html", 1500);
             } else {
-                status.innerText = "FAILED: " + result.message;
+                status.innerText = "验证失败: " + result.message;
                 status.classList.add('error-shake');
                 status.style.color = "red";
             }
         } catch (e) {
-            status.innerText = "SERVER ERROR!";
+            status.innerText = "服务器异常！请检查网络设置。";
             status.classList.add('error-shake');
         }
     }
@@ -245,7 +245,7 @@
         status.classList.remove('error-shake');
 
         if(!user || !pass) {
-            status.innerText = "⚠️ MISSING CREDENTIALS!";
+            status.innerText = "⚠️ 凭证不能为空！";
             status.classList.add('error-shake');
             return;
         }
@@ -255,7 +255,7 @@
         void shutter.offsetWidth;
         shutter.classList.add('fire');
 
-        status.innerText = "VERIFYING CLEARANCE...";
+        status.innerText = "正在核对后台权限...";
         status.style.color = "var(--pop-yellow)";
 
         try {
@@ -268,18 +268,18 @@
             const data = await res.json();
 
             if(data.success) {
-                status.innerText = "✅ CLEARANCE GRANTED";
+                status.innerText = "✅ 授权通过，准许进入";
                 status.style.color = "var(--pop-green)";
                 localStorage.setItem('admin_username', data.userName || user);
                 // ✨ 成功跳转到管理员主页
                 setTimeout(() => window.location.href = "/admin-index.html", 1000);
             } else {
-                status.innerText = "❌ ACCESS DENIED";
+                status.innerText = "❌ 访问被拒绝！密码错误或无权限";
                 status.style.color = "var(--pop-pink)";
                 status.classList.add('error-shake');
             }
         } catch(e) {
-            status.innerText = "⚠️ SYSTEM ERROR / OFFLINE";
+            status.innerText = "⚠️ 系统故障或核心服务离线";
             status.style.color = "var(--pop-pink)";
             status.classList.add('error-shake');
         }

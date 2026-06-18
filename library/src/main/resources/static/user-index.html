@@ -10,7 +10,7 @@
             --pop-green: #00FF66; --pop-black: #111111; --pop-white: #ffffff;
         }
         body {
-            font-family: 'Impact', sans-serif; background-color: #f0f0f0;
+            font-family: 'Impact', '黑体', sans-serif; background-color: #f0f0f0;
             background-image: radial-gradient(var(--pop-black) 10%, transparent 11%);
             background-size: 20px 20px; margin: 0; padding: 20px;
         }
@@ -74,10 +74,11 @@
             font-size: 2.5rem;
             -webkit-text-stroke: 1.5px var(--pop-black);
             text-transform: uppercase;
+            font-family: 'Impact', '黑体', sans-serif;
         }
 
         .search-bar { display: flex; gap: 5px; margin-bottom: 20px; }
-        .search-bar input { flex: 1; border: 4px solid var(--pop-black); padding: 10px; font-weight: bold; }
+        .search-bar input { flex: 1; border: 4px solid var(--pop-black); padding: 10px; font-weight: bold; font-family: '黑体', sans-serif;}
         .search-bar button { background: var(--pop-black); color: white; border: none; cursor: pointer; padding: 0 15px; }
 
         .search-item {
@@ -89,7 +90,7 @@
         .search-item img { width: 60px; height: 80px; border: 2px solid var(--pop-black); object-fit: cover; }
         .search-item .info { flex: 1; font-size: 0.8rem; }
         .search-item h4 { margin: 0; font-size: 0.9rem; }
-        .add-btn { background: var(--pop-pink); color: white; border: 2px solid var(--pop-black); cursor: pointer; height: 30px; margin-top: 5px; font-weight:bold; transition: 0.2s; }
+        .add-btn { background: var(--pop-pink); color: white; border: 2px solid var(--pop-black); cursor: pointer; height: 30px; margin-top: 5px; font-weight:bold; transition: 0.2s; font-family: '黑体', sans-serif;}
         .add-btn:hover { background: var(--pop-green); color: var(--pop-black); }
 
         .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
@@ -102,7 +103,8 @@
         }
         .book-card:hover { transform: scale(1.05) rotate(2deg); z-index: 5; }
         .book-card img { width: 100%; height: 250px; object-fit: cover; border: 3px solid var(--pop-black); }
-        .book-card h3 { font-size: 1rem; margin: 10px 0; height: 40px; overflow: hidden; }
+        .book-card h3 { font-size: 1rem; margin: 10px 0; height: 40px; overflow: hidden; padding: 0 5px;}
+        .book-card p { padding: 0 5px; font-weight: bold; color: #555;}
 
         @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
@@ -138,7 +140,7 @@
             background: var(--pop-pink); color: var(--pop-white);
             border: 4px solid var(--pop-black); padding: 10px 20px; font-size: 1.2rem;
             cursor: pointer; box-shadow: 5px 5px 0px var(--pop-black); text-transform: uppercase;
-            transition: all 0.2s ease-out; display: flex; align-items: center; gap: 10px;
+            transition: all 0.2s ease-out; display: flex; align-items: center; gap: 10px; font-family: 'Impact', '黑体', sans-serif;
         }
         .user-avatar-btn:hover { transform: translate(-4px, -4px) rotate(-3deg); box-shadow: 9px 9px 0px var(--pop-black); background: var(--pop-yellow); color: var(--pop-black); }
 
@@ -150,7 +152,7 @@
         .pop-menu.active { display: block; animation: powOpen 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
         @keyframes powOpen { 0% { opacity: 0; transform: scale(0) rotate(-30deg); } 100% { opacity: 1; transform: scale(1) rotate(0deg); } }
 
-        .menu-item { display: block; padding: 15px 20px; text-decoration: none; color: var(--pop-black); font-size: 1.2rem; border-bottom: 4px solid var(--pop-black); transition: all 0.2s; background: var(--pop-blue); font-weight: bold; }
+        .menu-item { display: block; padding: 15px 20px; text-decoration: none; color: var(--pop-black); font-size: 1.2rem; border-bottom: 4px solid var(--pop-black); transition: all 0.2s; background: var(--pop-blue); font-weight: bold; font-family: '黑体', sans-serif;}
         .menu-item:last-child { border-bottom: none; }
         .menu-item:hover { background: var(--pop-yellow); padding-left: 30px; color: var(--pop-pink); -webkit-text-stroke: 1px var(--pop-black); }
         .menu-item.logout { background: var(--pop-pink); color: var(--pop-white); }
@@ -204,7 +206,7 @@
         .recom-title {
             font-size: 2.5rem; color: var(--pop-white);
             -webkit-text-stroke: 2px var(--pop-black); text-shadow: 4px 4px 0 var(--pop-black);
-            margin: 0 0 20px 0; transform: rotate(-3deg);
+            margin: 0 0 20px 0; transform: rotate(-3deg); font-family: 'Impact', '黑体', sans-serif;
         }
 
         .recom-cover {
@@ -214,14 +216,14 @@
         }
         .recom-cover:hover { transform: scale(1.05); }
 
-        .recom-book-name { font-size: 1.5rem; margin-bottom: 20px; background: var(--pop-white); border: 3px solid var(--pop-black); padding: 5px; }
+        .recom-book-name { font-size: 1.5rem; margin-bottom: 20px; background: var(--pop-white); border: 3px solid var(--pop-black); padding: 5px; font-weight: bold; font-family: '黑体', sans-serif;}
 
         .recom-actions { display: flex; gap: 10px; justify-content: center; }
 
         .recom-btn {
-            flex: 1; padding: 15px; font-size: 1.2rem; font-family: 'Impact', sans-serif;
+            flex: 1; padding: 15px; font-size: 1.2rem; font-family: 'Impact', '黑体', sans-serif;
             border: 4px solid var(--pop-black); cursor: pointer; text-transform: uppercase;
-            transition: all 0.2s; position: relative; overflow: hidden;
+            transition: all 0.2s; position: relative; overflow: hidden; font-weight: bold;
         }
         .recom-btn-read { background: var(--pop-green); color: var(--pop-black); box-shadow: 6px 6px 0px var(--pop-black); }
         .recom-btn-add { background: var(--pop-blue); color: var(--pop-black); box-shadow: 6px 6px 0px var(--pop-black); }
@@ -243,19 +245,19 @@
 <div class="recom-overlay" id="dailyRecomOverlay">
     <div class="recom-content" id="dailyRecomContent">
         <button class="recom-close-btn" onclick="closeRecommendation()">✖</button>
-        <h2 class="recom-title">BOOM! PICK</h2>
+        <h2 class="recom-title">💥 今日爆款推荐</h2>
         <img src="" class="recom-cover" id="recomCover" alt="Daily Recommendation">
-        <div class="recom-book-name" id="recomBookName">Loading...</div>
+        <div class="recom-book-name" id="recomBookName">加载中...</div>
         <div class="recom-actions">
-            <button class="recom-btn recom-btn-read" id="recomReadBtn">READ NOW</button>
-            <button class="recom-btn recom-btn-add" id="recomAddBtn">ADD TO LIST</button>
+            <button class="recom-btn recom-btn-read" id="recomReadBtn">立即阅读</button>
+            <button class="recom-btn recom-btn-add" id="recomAddBtn">加入书单</button>
         </div>
     </div>
 </div>
 
 <div class="main-grid">
     <div class="search-section">
-        <h2>🌐 Global Search</h2>
+        <h2>🌐 全球书库检索</h2>
         <div class="search-bar">
             <input type="text" id="query" placeholder="搜索书名或作者...">
             <button onclick="searchExternal()"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -267,11 +269,11 @@
 
     <div class="my-library">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 id="userNameDisplay">📚 My Collection</h2>
+            <h2 id="userNameDisplay">📚 我的收藏馆</h2>
 
             <div class="user-menu-container">
                 <button class="user-avatar-btn" onclick="toggleMenu()">
-                    <i class="fa-solid fa-user-astronaut"></i> <span id="navUsername">USER</span>
+                    <i class="fa-solid fa-user-astronaut"></i> <span id="navUsername">用户</span>
                 </button>
 
                 <div class="pop-menu" id="userMenu">
@@ -335,7 +337,7 @@
         if(!q) return;
 
         const resultsDiv = document.getElementById('searchResults');
-        resultsDiv.innerHTML = "<strong style='color:var(--pop-pink); font-size:1.5rem;'>⚡️ SEARCHING...</strong>";
+        resultsDiv.innerHTML = "<strong style='color:var(--pop-pink); font-size:1.5rem;'>⚡️ 检索中...</strong>";
         isSearching = true;
 
         try {
@@ -345,7 +347,7 @@
             const data = await res.json();
 
             if (!data.results || data.results.length === 0) {
-                resultsDiv.innerHTML = "<strong style='color:var(--pop-black);'>NO BOOKS FOUND! 😭 换个词试试？</strong>";
+                resultsDiv.innerHTML = "<strong style='color:var(--pop-black);'>未找到相关书籍！😭 换个词试试？</strong>";
                 return;
             }
 
@@ -354,10 +356,10 @@
                     ? item.artworkUrl100.replace('100x100', '300x300')
                     : 'https://placehold.co/60x80/111111/FFDE00?text=NO+COVER';
 
-                const safeTitle = item.trackName ? item.trackName.replace(/'/g, "\\'") : 'Unknown Title';
-                const safeAuthor = item.artistName ? item.artistName.replace(/'/g, "\\'") : 'Unknown Author';
+                const safeTitle = item.trackName ? item.trackName.replace(/'/g, "\\'") : '未知书名';
+                const safeAuthor = item.artistName ? item.artistName.replace(/'/g, "\\'") : '未知作者';
 
-                // 💥 抛弃苹果死链接，生成微信读书网页版搜索直达链接！
+
                 const readLink = `https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(safeTitle)}`;
 
                 const isbn = item.trackId ? item.trackId.toString() : 'N/A';
@@ -368,7 +370,7 @@
                         <div class="info">
                             <h4>${safeTitle}</h4>
                             <p>${safeAuthor}</p>
-                            <button class="add-btn" onclick="addToMyList('${safeTitle}', '${safeAuthor}', '${cover}', '${isbn}', '${readLink}')">ADD TO LIST</button>
+                            <button class="add-btn" onclick="addToMyList('${safeTitle}', '${safeAuthor}', '${cover}', '${isbn}', '${readLink}')">加入书单</button>
                         </div>
                     </div>
                 `;
@@ -403,10 +405,10 @@
                     loadMyBooks();
                 }
             } else {
-                alert("Failed to add book.");
+                alert("添加书籍失败。");
             }
         } catch (e) {
-            console.error("Error adding book:", e);
+            console.error("添加书籍出错:", e);
         }
     }
 
@@ -432,7 +434,7 @@
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
-                    console.log(`%c KA-CHING! +10 COINS! Balance: ${data.newBalance}`, "color: #FFDE00; font-weight: bold; font-size: 1.2rem;");
+                    console.log(`%c 叮！+10 波普币！当前余额: ${data.newBalance}`, "color: #FFDE00; font-weight: bold; font-size: 1.2rem;");
                     // 这里可以扩展一个小的 UI 提示，比如在按钮上方飘出一个 "+10 🪙"
                 }
             })
@@ -453,14 +455,14 @@
 
             grid.innerHTML = books.map(b => `
                 <div class="book-card" id="book-card-${b.id}">
-                    <button class="remove-btn" onclick="removeBook(${b.id}, event)" title="Remove">✖</button>
+                    <button class="remove-btn" onclick="removeBook(${b.id}, event)" title="移除">✖</button>
                     <img src="${b.coverUrl}">
                     <h3>${b.title}</h3>
-                    <p>By: ${b.author}</p>
-                    <button class="add-btn read-btn" style="width:100%; background:var(--pop-black)" onclick="handleReadClick(this, '${b.readUrl}')">READ NOW</button>
+                    <p>作者: ${b.author}</p>
+                    <button class="add-btn read-btn" style="width:100%; background:var(--pop-black)" onclick="handleReadClick(this, '${b.readUrl}')">立即阅读</button>
                 </div>
             `).join('');
-        } catch (e) { console.error("Error loading books:", e); }
+        } catch (e) { console.error("加载书籍出错:", e); }
     }
 
     async function removeBook(bookId, event) {
@@ -476,7 +478,7 @@
             });
             if(res.ok) setTimeout(() => { card.remove(); }, 600);
             else { alert("Oops! 移除失败，请重试！"); card.classList.remove('removing'); }
-        } catch (e) { console.error("Error removing book:", e); card.classList.remove('removing'); }
+        } catch (e) { console.error("移除书籍出错:", e); card.classList.remove('removing'); }
     }
 
     /* =========================================

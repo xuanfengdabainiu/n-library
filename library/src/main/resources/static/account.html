@@ -2,13 +2,13 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>ACCOUNT - POP! LIBRARY</title>
+    <title>账户 - POP! 图书馆</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --pop-yellow: #FFDE00; --pop-pink: #FF3366; --pop-blue: #00E5FF; --pop-green: #00FF66; --pop-black: #111111; --pop-white: #ffffff; }
 
         body {
-            font-family: 'Impact', sans-serif; margin: 0; height: 100vh; overflow: hidden;
+            font-family: 'Impact', '黑体', sans-serif; margin: 0; height: 100vh; overflow: hidden;
             background-color: var(--pop-white);
             background-image: radial-gradient(rgba(17, 17, 17, 0.15) 20%, transparent 21%);
             background-size: 40px 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;
@@ -24,7 +24,7 @@
         .graffiti-svg { width: 100%; height: auto; display: block; }
 
         /* --- ✨ 页面布局与发牌特效 --- */
-        .header { position: absolute; top: 30px; left: 40px; background: var(--pop-green); color: var(--pop-black); padding: 15px 30px; border: 6px solid var(--pop-black); font-size: 2.5rem; text-transform: uppercase; box-shadow: 10px 10px 0px var(--pop-black); transform: rotate(-2deg); z-index: 100; }
+        .header { position: absolute; top: 30px; left: 40px; background: var(--pop-green); color: var(--pop-black); padding: 15px 30px; border: 6px solid var(--pop-black); font-size: 2.5rem; text-transform: uppercase; box-shadow: 10px 10px 0px var(--pop-black); transform: rotate(-2deg); z-index: 100; font-family: 'Impact';}
         .back-btn { position: absolute; top: 35px; right: 40px; background: var(--pop-pink); color: var(--pop-white); width: 70px; height: 70px; border: 6px solid var(--pop-black); border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 6px 6px 0px var(--pop-black); transition: all 0.2s; z-index: 100; text-decoration: none; }
         .back-btn:hover { background: var(--pop-yellow); color: var(--pop-black); transform: scale(1.1) rotate(-15deg); }
 
@@ -90,11 +90,11 @@
         @keyframes dealArc2 { 0% { transform: rotate(-90deg) scale(0.5); opacity: 0; } 100% { transform: rotate(0deg) translateY(-40px); opacity: 1; } }
         @keyframes dealArc3 { 0% { transform: rotate(-90deg) scale(0.5); opacity: 0; } 100% { transform: rotate(22deg); opacity: 1; } }
 
-        .card h3 { font-size: 2.2rem; margin: 0 0 20px 0; border-bottom: 6px solid var(--pop-black); padding-bottom: 10px; text-transform: uppercase; -webkit-text-stroke: 1px var(--pop-black); color: var(--pop-white); }
+        .card h3 { font-size: 2.2rem; margin: 0 0 20px 0; border-bottom: 6px solid var(--pop-black); padding-bottom: 10px; text-transform: uppercase; -webkit-text-stroke: 1px var(--pop-black); color: var(--pop-white); font-family: 'Impact';}
         .avatar-box { width: 120px; height: 120px; border: 6px solid var(--pop-black); border-radius: 50%; margin: 0 auto 20px; background: var(--pop-white) url('https://api.dicebear.com/6.x/bottts/svg?seed=pop') center/cover; }
-        .info-row { display: flex; justify-content: space-between; align-items: center; background: var(--pop-white); border: 4px solid var(--pop-black); padding: 10px; margin-bottom: 15px; font-size: 1.2rem; color: var(--pop-black); }
+        .info-row { display: flex; justify-content: space-between; align-items: center; background: var(--pop-white); border: 4px solid var(--pop-black); padding: 10px; margin-bottom: 15px; font-size: 1.2rem; color: var(--pop-black); font-family: '黑体'; font-weight: bold;}
 
-        .action-btn { width: 100%; padding: 15px; margin-top: auto; font-family: 'Impact', sans-serif; font-size: 1.5rem; border: 5px solid var(--pop-black); cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .action-btn { width: 100%; padding: 15px; margin-top: auto; font-family: '黑体', sans-serif; font-size: 1.5rem; font-weight: bold; border: 5px solid var(--pop-black); cursor: pointer; transition: 0.2s; text-transform: uppercase; }
         .btn-yellow { background: var(--pop-yellow); color: var(--pop-black); } .btn-pink { background: var(--pop-pink); color: white; } .btn-black { background: var(--pop-black); color: white; } .btn-green { background: var(--pop-green); color: var(--pop-black); }
         .action-btn:hover { transform: translate(-4px, -4px); box-shadow: 6px 6px 0px var(--pop-black); }
         .action-btn:active { transform: translate(0, 0); box-shadow: 0px 0px 0px var(--pop-black); }
@@ -115,13 +115,13 @@
         .pin-modal-overlay.active .typewriter-case { transform: translateY(0); }
         .typewriter-paper { background: #f0f0f0; min-height: 80px; padding: 20px; border-radius: 5px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.2); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .paper-content { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: bold; color: #333; letter-spacing: 5px; word-break: break-all; text-align: center; }
-        .paper-label { position: absolute; top: 5px; left: 10px; font-size: 0.7rem; color: #888; text-transform: uppercase; }
+        .paper-label { position: absolute; top: 5px; left: 10px; font-size: 0.8rem; color: #888; font-family: '黑体'; font-weight: bold;}
         .keyboard-area { display: flex; flex-direction: column; gap: 10px; align-items: center; }
         .keyboard-row { display: flex; gap: 8px; }
         .key-round { width: 45px; height: 45px; border-radius: 50%; background: #eee; border: 3px solid #666; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 0 #999; transition: 0.1s; font-family: 'Courier New', monospace; font-weight: bold; }
         .key-round:active { transform: translateY(3px); box-shadow: 0 1px 0 #999; background: #ccc; }
         .key-round.backspace { width: 80px; border-radius: 10px; background: var(--pop-pink); color: white; }
-        .key-round.enter { width: 100px; border-radius: 10px; background: var(--pop-green); }
+        .key-round.enter { width: 100px; border-radius: 10px; background: var(--pop-green); font-family: '黑体'; color: var(--pop-black);}
         .key-round.caps { width: 80px; border-radius: 10px; background: var(--pop-blue); color: #111; }
         .key-round.active-caps { background: var(--pop-yellow); box-shadow: 0 0 15px var(--pop-yellow); border-color: var(--pop-black); }
         .close-modal { position: absolute; top: 40px; right: 50px; color: var(--pop-white); font-size: 4rem; cursor: pointer; }
@@ -136,7 +136,7 @@
     <i class="fa-solid fa-xmark close-modal" id="closePinModal"></i>
     <div class="typewriter-case">
         <div class="typewriter-paper" id="paper">
-            <div class="paper-label" id="paperLabel">Enter New Password</div>
+            <div class="paper-label" id="paperLabel">请输入新密码</div>
             <div class="paper-content" id="paperContent">________</div>
         </div>
         <div class="keyboard-area" id="keyArea">
@@ -144,40 +144,40 @@
     </div>
 </div>
 
-<div class="header">⚡️ SETTINGS</div>
+<div class="header">⚡️ 账号设置</div>
 <a href="user-index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
 
 <div class="cards-container">
     <div class="card card-1" id="membershipCard">
         <div class="card-inner">
             <div class="card-face card-front">
-                <h3>ID CARD</h3>
+                <h3>身份卡</h3>
                 <div class="avatar-box" id="avatarBox"></div>
-                <div class="info-row"><span>USER:</span> <strong id="accUsername">Loading</strong></div>
-                <div class="info-row"><span>PASSWORD:</span> <strong id="userPassDisplay">Loading</strong></div>
-                <button class="action-btn btn-black" id="btnMembership">MEMBERSHIP</button>
+                <div class="info-row"><span>用户账号:</span> <strong id="accUsername" style="font-family:'Impact'">Loading</strong></div>
+                <div class="info-row"><span>当前密码:</span> <strong id="userPassDisplay" style="font-family:'Impact'">Loading</strong></div>
+                <button class="action-btn btn-black" id="btnMembership">会员信息</button>
             </div>
             <div class="card-face card-back">
                 <div class="holographic-overlay"></div>
-                <h3>VIP MEMBER</h3>
+                <h3>VIP 会员</h3>
                 <div style="margin-top: 20px; text-align: center;">
                     <i class="fa-solid fa-crown" style="font-size: 4rem; color: gold; filter: drop-shadow(0 0 10px gold);"></i>
                 </div>
-                <div style="margin: 30px 0; border: 2px dashed var(--pop-yellow); padding: 15px; font-size: 0.9rem;">
-                    <div style="display:flex; justify-content: space-between;"><span>RANK:</span> <span>LEGENDARY</span></div>
-                    <div style="display:flex; justify-content: space-between; margin-top:10px;"><span>SINCE:</span> <span id="vipDate">2026</span></div>
+                <div style="margin: 30px 0; border: 2px dashed var(--pop-yellow); padding: 15px; font-size: 0.9rem; font-family: '黑体'; font-weight:bold;">
+                    <div style="display:flex; justify-content: space-between;"><span>专属等级:</span> <span>传奇读者</span></div>
+                    <div style="display:flex; justify-content: space-between; margin-top:10px;"><span>注册年份:</span> <span id="vipDate" style="font-family:'Impact'">2026</span></div>
                 </div>
                 <div class="vip-barcode">
                     <div class="barcode-line"></div><div class="barcode-line wide"></div><div class="barcode-line"></div><div class="barcode-line wide"></div>
                     <div class="barcode-line"></div><div class="barcode-line wide"></div><div class="barcode-line"></div><div class="barcode-line wide"></div>
                 </div>
-                <button class="action-btn btn-yellow" id="btnBackToFront" style="margin-top: 20px; color: black;">BACK TO ID</button>
+                <button class="action-btn btn-yellow" id="btnBackToFront" style="margin-top: 20px; color: black;">返回正面</button>
             </div>
         </div>
     </div>
 
     <div class="card card-2">
-        <h3>SECURITY</h3>
+        <h3>系统安全</h3>
         <div class="face-id-scanner" id="scannerBox">
             <i class="fa-solid fa-expand" id="scannerIcon" style="position: relative; z-index: 3;"></i>
 
@@ -185,18 +185,18 @@
 
             <img id="faceImage" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index: 2;" />
         </div>
-        <div class="info-row" style="background:var(--pop-green);"><span>FACE ID:</span> <strong id="faceIdStatus">READY</strong></div>
-        <button class="action-btn btn-yellow" id="btnScanFace">⚡️ RE-SCAN FACE</button>
-        <button class="action-btn btn-pink" id="btnChangePin" style="margin-top:10px;">CHANGE PASS</button>
+        <div class="info-row" style="background:var(--pop-green);"><span>面部识别:</span> <strong id="faceIdStatus">已录入</strong></div>
+        <button class="action-btn btn-yellow" id="btnScanFace">⚡️ 重新录入面部</button>
+        <button class="action-btn btn-pink" id="btnChangePin" style="margin-top:10px;">修改密码</button>
     </div>
 
     <div class="card card-3">
-        <h3>STATS</h3>
+        <h3>统计数据</h3>
         <div style="text-align: center;"><div class="badge" id="fireBadge">🔥</div></div>
-        <div class="info-row"><span>JOINED:</span> <strong id="statJoined">...</strong></div>
-        <div class="info-row"><span>BOOKS:</span> <strong id="statCollected">...</strong></div>
-        <div class="info-row"><span>COINS:</span> <strong id="statCoins">...</strong></div>
-        <button class="action-btn btn-green" id="btnMintCoin">🔥 MINT COIN</button>
+        <div class="info-row"><span>已加入:</span> <strong id="statJoined" style="font-family:'Impact'">...</strong></div>
+        <div class="info-row"><span>藏书量:</span> <strong id="statCollected" style="font-family:'Impact'">...</strong></div>
+        <div class="info-row"><span>波普币:</span> <strong id="statCoins" style="font-family:'Impact'">...</strong></div>
+        <button class="action-btn btn-green" id="btnMintCoin">🔥 铸造波普币</button>
     </div>
 </div>
 
@@ -267,7 +267,7 @@
 
                 let displayKey = key;
                 if(key.length === 1) displayKey = isCaps ? key.toUpperCase() : key.toLowerCase();
-                k.innerText = key === 'ENT' ? 'CONFIRM' : displayKey;
+                k.innerText = key === 'ENT' ? '确认' : displayKey;
                 k.onclick = () => typeChar(key);
                 rowDiv.appendChild(k);
             });
@@ -283,18 +283,18 @@
         if(val === 'CAPS') { isCaps = !isCaps; renderKeyboard(); return; }
         if(val === 'DEL') currentInput = currentInput.slice(0, -1);
         else if(val === 'ENT') {
-            if(currentInput.length < 4) return alert("Min 4 characters!");
-            if(pinStep === 1) { firstPin = currentInput; currentInput = ""; pinStep = 2; document.getElementById('paperLabel').innerText = "Confirm New Password"; }
+            if(currentInput.length < 4) return alert("最少4个字符！");
+            if(pinStep === 1) { firstPin = currentInput; currentInput = ""; pinStep = 2; document.getElementById('paperLabel').innerText = "请再次确认密码"; }
             else {
                 if(currentInput === firstPin) {
-                    document.getElementById('paperLabel').innerText = "UPDATING...";
+                    document.getElementById('paperLabel').innerText = "密码更新中...";
                     fetch(`/api/user/update-password?username=${currentUsername}&newPassword=${firstPin}`, {method:'POST'}).then(r => { if(r.ok) location.reload(); });
-                } else { alert("Mismatch!"); resetTypewriter(); }
+                } else { alert("两次输入不一致！"); resetTypewriter(); }
             }
         } else { if(currentInput.length < 15) currentInput += (isCaps ? val.toUpperCase() : val.toLowerCase()); }
         document.getElementById('paperContent').innerText = "*".repeat(currentInput.length) || "________";
     }
-    function resetTypewriter() { pinStep = 1; firstPin = ""; currentInput = ""; document.getElementById('paperLabel').innerText = "Enter New Password"; document.getElementById('paperContent').innerText = "________"; }
+    function resetTypewriter() { pinStep = 1; firstPin = ""; currentInput = ""; document.getElementById('paperLabel').innerText = "请输入新密码"; document.getElementById('paperContent').innerText = "________"; }
 
     // --- ✨ 基础逻辑加载 ---
     const video = document.getElementById('videoElement'), canvas = document.getElementById('canvasElement');
@@ -307,8 +307,8 @@
                 stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 video.srcObject = stream; video.style.display = 'block'; faceImage.style.display = 'none';
                 document.getElementById('scannerBox').classList.add('scanning');
-                btnScanFace.innerText = '📸 SNAP!'; isScanning = true;
-            } catch (e) { alert("Camera Access Denied"); }
+                btnScanFace.innerText = '📸 咔嚓！截取'; isScanning = true;
+            } catch (e) { alert("无法访问摄像头"); }
         } else {
             canvas.width = video.videoWidth; canvas.height = video.videoHeight;
             canvas.getContext('2d').drawImage(video, 0, 0); const base64 = canvas.toDataURL('image/jpeg');
@@ -358,8 +358,8 @@
         const res = await fetch(`/api/user/stats?username=${currentUsername}`);
         if(res.ok) {
             const data = await res.json();
-            document.getElementById('statJoined').innerText = `DAY ${data.joinedDays}`;
-            document.getElementById('statCollected').innerText = `${data.collectedBooks} BOOKS`;
+            document.getElementById('statJoined').innerText = `第 ${data.joinedDays} 天`;
+            document.getElementById('statCollected').innerText = `${data.collectedBooks} 本`;
             document.getElementById('statCoins').innerText = data.popCoins.toLocaleString();
 
             // ✨ 新增这一行：直接显示明文密码

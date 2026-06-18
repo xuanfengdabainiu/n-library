@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>POP! 图书交流群</title>
+    <title>POP! 图书交流室</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
@@ -31,14 +31,14 @@
             background: var(--pop-yellow); border-bottom: 8px solid var(--pop-black);
             padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
         }
-        .chat-header h2 { margin: 0; font-size: 2rem; -webkit-text-stroke: 1px var(--pop-black); color: var(--pop-white); text-shadow: 3px 3px 0 var(--pop-black); transform: rotate(-2deg); }
+        .chat-header h2 { margin: 0; font-size: 2.2rem; -webkit-text-stroke: 1px var(--pop-black); color: var(--pop-white); text-shadow: 3px 3px 0 var(--pop-black); transform: rotate(-2deg); font-family: '黑体'; font-weight: bold;}
 
         /* ✨ 新增：顶部信息区布局 */
         .header-info { display: flex; gap: 10px; align-items: center; }
         .badge { background: var(--pop-pink); color: white; padding: 5px 10px; border: 3px solid var(--pop-black); font-size: 1.2rem; transform: rotate(3deg); box-shadow: 3px 3px 0 var(--pop-black);}
         .coin-badge { background: var(--pop-blue); color: var(--pop-black); font-weight: bold; transform: rotate(-2deg); }
 
-        .back-btn { background: var(--pop-black); color: var(--pop-white); border: none; padding: 10px 15px; font-size: 1rem; cursor: pointer; font-family: 'Impact'; transition: 0.2s;}
+        .back-btn { background: var(--pop-black); color: var(--pop-white); border: none; padding: 10px 15px; font-size: 1.2rem; font-weight: bold; cursor: pointer; font-family: '黑体'; transition: 0.2s;}
         .back-btn:hover { background: var(--pop-green); color: var(--pop-black); transform: scale(1.1); }
 
         /* 聊天消息区 */
@@ -74,7 +74,7 @@
         .chat-input-area input:focus { background: var(--pop-yellow); }
         .send-btn {
             background: var(--pop-white); color: var(--pop-black); border: 5px solid var(--pop-black);
-            padding: 0 25px; font-size: 1.5rem; cursor: pointer; font-family: 'Impact';
+            padding: 0 25px; font-size: 1.5rem; cursor: pointer; font-family: '黑体'; font-weight: bold;
             box-shadow: 6px 6px 0px var(--pop-black); transition: 0.1s;
         }
         .send-btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px var(--pop-black); background: var(--pop-yellow); }
@@ -108,12 +108,12 @@
             box-shadow: 20px 20px 0px var(--pop-pink); padding: 30px; width: 350px;
             text-align: center;
         }
-        .broke-content h2 { font-size: 3rem; color: var(--pop-white); -webkit-text-stroke: 2px var(--pop-black); text-shadow: 4px 4px 0 var(--pop-black); margin-top:0; transform: rotate(-4deg); }
+        .broke-content h2 { font-size: 3rem; color: var(--pop-white); -webkit-text-stroke: 2px var(--pop-black); text-shadow: 4px 4px 0 var(--pop-black); margin-top:0; transform: rotate(-4deg); font-family: 'Impact';}
         .broke-content p { font-size: 1.2rem; font-family: '黑体'; font-weight: bold; margin-bottom: 25px;}
         .broke-actions { display: flex; flex-direction: column; gap: 10px; }
         .broke-btn {
             background: var(--pop-green); color: var(--pop-black); border: 4px solid var(--pop-black);
-            padding: 15px; font-size: 1.2rem; font-family: 'Impact'; cursor: pointer;
+            padding: 15px; font-size: 1.2rem; font-family: '黑体'; font-weight: bold; cursor: pointer;
             box-shadow: 6px 6px 0px var(--pop-black); transition: 0.2s; text-transform: uppercase;
         }
         .broke-btn:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px var(--pop-black); }
@@ -125,7 +125,7 @@
 
 <div class="broke-overlay" id="brokeOverlay">
     <div class="broke-content" id="brokeContent">
-        <h2>💥 BROKE! 💥</h2>
+        <h2>💥 破产啦! 💥</h2>
         <p>Oops! 你的波普币不足 10 个啦！<br>没钱可发不出电波哦 📡</p>
         <div class="broke-actions">
             <button class="broke-btn" onclick="window.location.href='user-index.html'"><i class="fa-solid fa-book-open"></i> 去读书赚硬币</button>
@@ -136,8 +136,8 @@
 
 <div class="chat-container">
     <div class="chat-header">
-        <button class="back-btn" onclick="window.location.href='user-index.html'"><i class="fa-solid fa-arrow-left"></i> LEAVE</button>
-        <h2>POP! CHAT</h2>
+        <button class="back-btn" onclick="window.location.href='user-index.html'"><i class="fa-solid fa-arrow-left"></i> 离开</button>
+        <h2>POP! 聊天大厅</h2>
         <div class="header-info">
             <div class="badge coin-badge" id="coinDisplay">🪙 拉取中...</div>
             <div class="badge">发言 -10 🪙</div>
@@ -186,7 +186,7 @@
                 currentCoins = data.popCoins || 0;
                 coinDisplay.innerText = `🪙 ${currentCoins}`;
             } else {
-                coinDisplay.innerText = `🪙 Error`;
+                coinDisplay.innerText = `🪙 错误`;
             }
         } catch (e) {
             console.error("加载硬币失败", e);
@@ -284,7 +284,7 @@
         wrapperDiv.className = isSelf ? 'message-wrapper msg-self' : 'message-wrapper msg-others';
 
         wrapperDiv.innerHTML = `
-            <div class="message-sender">${isSelf ? 'ME' : sender}</div>
+            <div class="message-sender">${isSelf ? '我' : sender}</div>
             <div class="message-bubble">${content}</div>
         `;
 

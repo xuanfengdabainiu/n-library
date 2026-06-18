@@ -23,27 +23,18 @@ public class UserBookController {
     public String addToMyList(@RequestBody Map<String, String> data) {
         String username = data.get("username");
         String isbn = data.get("isbn");
-
-        // A. 找到用户
         User user = userRepository.findByUsername(username);
-        // B. 检查书库里是否有这本书（通过ISBN）
         Book book = bookRepository.findByIsbn(isbn);
-
         if (book == null) {
-            // 如果是全球搜索来的新书，先存入公共书库
             book = new Book();
             book.setIsbn(isbn);
             book.setTitle(data.get("title"));
             book.setAuthor(data.get("author"));
             book.setCoverUrl(data.get("coverUrl"));
-
-            // --- 关键修复：把前端传来的阅读链接存入实体类！ ---
             book.setReadUrl(data.get("readUrl"));
 
             book = bookRepository.save(book);
         }
-
-        // C. 绑定用户和书
         if (!userBookRepository.existsByUserIdAndBookId(user.getId(), book.getId())) {
             userBookRepository.save(new UserBook(user.getId(), book.getId()));
             return "SUCCESS";

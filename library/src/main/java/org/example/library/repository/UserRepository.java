@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // JPA 的魔法：只要方法名写对，它会自动帮你生成 SQL 语句！
+    // JPA：只要方法名写对，它会自动帮你生成 SQL 语句！
     User findByUsername(String username);
 
     User findByFaceId(String faceId);

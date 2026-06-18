@@ -39,26 +39,14 @@ public class ChatController {
     public void handleMessage(Map<String, String> payload) {
         String username = payload.get("sender");
         String content = payload.get("content");
-
-        // 1. 获取用户信息
         User user = userRepository.findByUsername(username);
-
-        // 2. 核心拦截：金币检查
         if (user != null && user.getPopCoins() >= 10) {
-            // A. 扣除 10 金币
             user.setPopCoins(user.getPopCoins() - 10);
             userRepository.save(user);
-
-            // B. 持久化存储聊天记录 (存入 book_chat 表)
             ChatMessage msg = new ChatMessage(username, content);
-
-            // ✨ 修改点 2：解除注释，真正的持久化入库！
             chatMessageRepository.save(msg);
-
-            // C. 广播给所有人 (频道：/topic/public)
             messagingTemplate.convertAndSend("/topic/public", msg);
         } else {
-            // D. 余额不足：在控制台打印拦截日志
             System.out.println("⚠️ 拦截提示：用户 [" + username + "] 余额不足，强行发言被系统驳回！");
         }
     }
